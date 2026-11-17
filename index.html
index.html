@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>GreatGuru | GATE Mechanical</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#17243a}
+header{background:#101827;color:white;padding:17px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:bold;color:#83b2ff}
+header small{font-size:10px;color:#c5d2e5;display:block;letter-spacing:2px}
+.hero{background:linear-gradient(120deg,#14243c,#315a91);color:white;padding:30px 22px;border-radius:0 0 22px 22px}
+.hero h1{font-size:32px;margin:8px 0}
+.hero p{color:#d5e2f4;line-height:1.5}
+button{cursor:pointer}
+.start{background:#4380ed;color:white;border:0;padding:12px 18px;border-radius:9px;font-weight:bold}
+nav{display:flex;overflow-x:auto;gap:7px;padding:15px 12px;background:#fff}
+nav button{border:0;background:#edf1f8;padding:11px 14px;border-radius:9px;white-space:nowrap;font-weight:bold;color:#40516c}
+nav button.active{background:#dceaff;color:#2459b5}
+main{max-width:900px;margin:auto;padding:16px}
+section.page{display:none}
+section.page.active{display:block}
+h2{font-size:23px}
+.card{background:white;padding:18px;margin:12px 0;border-radius:14px;box-shadow:0 3px 12px #1d355710}
+.card h3{margin-top:0}
+.muted{color:#687991;font-size:13px}
+.task{display:block;padding:9px 0;border-bottom:1px solid #eee;font-size:14px}
+.task input{margin-right:9px}
+.bar{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden;margin:12px 0}
+.fill{height:100%;width:0;background:#3475dc}
+.subject{background:white;border-radius:12px;margin:10px 0;padding:14px}
+.subject summary{font-weight:bold;cursor:pointer}
+.topic{display:block;font-size:13px;padding:8px 0;color:#40516c}
+.topic input{margin-right:8px}
+.option{display:block;width:100%;text-align:left;padding:13px;margin:8px 0;border:1px solid #dce3ed;border-radius:9px;background:white;font-size:14px}
+.option.correct{background:#e4f8ee;border-color:#15966b}
+.option.wrong{background:#fff0f0;border-color:#d65b5b}
+.formula{padding:13px 0;border-bottom:1px solid #e9edf3}
+.equation{font-size:19px;color:#285db1;margin-top:5px}
+input[type=search]{width:100%;padding:13px;border:1px solid #dce3ed;border-radius:9px;font-size:15px}
+footer{text-align:center;color:#718096;padding:25px;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+ <div><div class="logo">GreatGuru</div><small>GATE MECHANICAL</small></div>
+ <span>📘 Study Hub</span>
+</header>
+
+<div class="hero">
+ <p>YOUR GATE PREPARATION PARTNER</p>
+ <h1>Learn. Practise.<br>Achieve.</h1>
+ <p>Build strong fundamentals and prepare for GATE Mechanical Engineering one day at a time.</p>
+ <button class="start" onclick="showPage('dashboard')">Start studying →</button>
+</div>
+
+<nav>
+ <button class="active" onclick="showPage('dashboard',this)">Home</button>
+ <button onclick="showPage('syllabus',this)">Syllabus</button>
+ <button onclick="showPage('practice',this)">Practice</button>
+ <button onclick="showPage('formulas',this)">Formulas</button>
+ <button onclick="showPage('plan',this)">Study Plan</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="page active">
+ <h2>Welcome to your study room 👋</h2>
+ <p class="muted" id="today"></p>
+
+ <div class="card">
+  <h3>📊 Syllabus Progress</h3>
+  <h2 id="progressText">0%</h2>
+  <div class="bar"><div class="fill" id="progressBar"></div></div>
+  <p class="muted" id="topicCount">0 topics completed</p>
+ </div>
+
+ <div class="card">
+  <h3>⏰ Daily Study Routine</h3>
+  <label class="task"><input type="checkbox"> 2 hours – Mechanical core subjects</label>
+  <label class="task"><input type="checkbox"> 1 hour – Numerical problems and PYQs</label>
+  <label class="task"><input type="checkbox"> 1 hour – Engineering Mathematics</label>
+  <label class="task"><input type="checkbox"> 45 minutes – General Aptitude</label>
+  <label class="task"><input type="checkbox"> 45 minutes – Revision and error notebook</label>
+  <p class="muted">Total target: 5 hours 30 minutes. Adjust according to your day.</p>
+ </div>
+
+ <div class="card">
+  <h3>🎯 Today's target</h3>
+  <p>Understand one concept, solve numerical problems and revise what you learned.</p>
+  <button class="start" onclick="showPage('syllabus')">Explore syllabus</button>
+ </div>
+</section>
+
+<section id="syllabus" class="page">
+ <h2>GATE Mechanical Syllabus</h2>
+ <p class="muted">Tick a topic after studying it. Progress is saved in this browser.</p>
+ <div id="syllabusContainer"></div>
+</section>
+
+<section id="practice" class="page">
+ <h2>Practice Zone</h2>
+ <p class="muted">Starter concept questions with explanations. These are original practice questions, not official PYQs.</p>
+ <div class="card">
+  <p id="qNumber" class="muted"></p>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="feedback"></p>
+  <button class="start" id="next" onclick="nextQuestion()" disabled>Next Question →</button>
+  <p id="score" class="muted">Score: 0</p>
+ </div>
+</section>
+
+<section id="formulas" class="page">
+ <h2>Formula Book</h2>
+ <input type="search" id="search" placeholder="Search formulas...">
+ <div id="formulaList" class="card"></div>
+</section>
+
+<section id="plan" class="page">
+ <h2>12-Week Priority Study Plan</h2>
+ <p class="muted">A starting framework. Check the official GATE 2027 syllabus and adjust to your exam date.</p>
+ <div id="weekList"></div>
+</section>
+
+</main>
+
+<footer>
+ <b>GreatGuru</b><br>
+ Learn honestly. Practise consistently. Improve every week.<br><br>
+ <a href="https://gate2027.iitm.ac.in/exam_papers_and_syllabus" target="_blank">Official GATE 2027 syllabus ↗</a>
+</footer>
+
+<script>
+const subjects = [
+["Engineering Mathematics",[
+"Linear Algebra",
+"Calculus",
+"Differential Equations",
+"Vector Calculus",
+"Numerical Methods",
+"Probability and Statistics"
+]],
+["Engineering Mechanics and SOM",[
+"Free Body Diagrams and Equilibrium",
+"Friction",
+"Kinematics and Dynamics",
+"Stress and Strain",
+"Shear Force and Bending Moment",
+"Bending and Torsion",
+"Beam Deflection",
+"Columns and Energy Methods"
+]],
+["Theory of Machines and Machine Design",[
+"Mechanisms",
+"Gears and Gear Trains",
+"Cams and Governors",
+"Balancing",
+"Free and Forced Vibrations",
+"Failure Theories",
+"Shafts, Bearings, Springs and Joints"
+]],
+["Fluid Mechanics",[
+"Fluid Properties and Statics",
+"Continuity Equation",
+"Bernoulli Equation",
+"Momentum Equation",
+"Dimensional Analysis",
+"Pipe Flow",
+"Boundary Layers"
+]],
+["Thermodynamics",[
+"Properties of Pure Substances",
+"First Law of Thermodynamics",
+"Second Law of Thermodynamics",
+"Entropy",
+"Availability",
+"Power Cycles",
+"Refrigeration Cycles"
+]],
+["Heat Transfer",[
+"Conduction",
+"Convection",
+"Radiation",
+"Heat Exchangers",
+"Boiling and Condensation"
+]],
+["Manufacturing and Materials",[
+"Engineering Materials",
+"Casting",
+"Metal Forming",
+"Welding and Joining",
+"Machining",
+"Tool Life and Cutting Forces",
+"Metrology",
+"Additive Manufacturing"
+]],
+["Industrial Engineering",[
+"Production Planning",
+"Inventory Control",
+"Operations Research",
+"Linear Programming",
+"Quality Control",
+"Reliability and Maintenance"
+]],
+["General Aptitude",[
+"Verbal Aptitude",
+"Quantitative Aptitude",
+"Analytical Reasoning",
+"Spatial Aptitude"
+]]
+];
+
+const storageKey="greatguru_completed_v1";
+let completed=JSON.parse(localStorage.getItem(storageKey)||"[]");
+
+function renderSyllabus(){
+ const box=document.getElementById("syllabusContainer");
+ box.innerHTML="";
+ subjects.forEach((subject,i)=>{
+  const details=document.createElement("details");
+  details.className="subject";
+  const summary=document.createElement("summary");
+  summary.textContent=subject[0];
+  details.appendChild(summary);
+  subject[1].forEach(topic=>{
+   const label=document.createElement("label");
+   label.className="topic";
+   const check=document.createElement("input");
+   check.type="checkbox";
+   const key=subject[0]+"|"+topic;
+   check.checked=completed.includes(key);
+   check.addEventListener("change",()=>{
+    if(check.checked) completed.push(key);
+    else completed=completed.filter(x=>x!==key);
+    localStorage.setItem(storageKey,JSON.stringify(completed));
+    updateProgress();
+   });
+   label.appendChild(check);
+   label.appendChild(document.createTextNode(topic));
+   details.appendChild(label);
+  });
+  box.appendChild(details);
+ });
+ updateProgress();
+}
+
+function updateProgress(){
+ const total=subjects.reduce((n,s)=>n+s[1].length,0);
+ const percent=Math.round(completed.length/total*100);
+ document.getElementById("progressText").textContent=percent+"%";
+ document.getElementById("progressBar").style.width=percent+"%";
+ document.getElementById("topicCount").textContent=completed.length+" of "+total+" topics completed";
+}
+
+function showPage(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+ window.scrollTo(0,0);
+}
+
+const questions=[
+ {q:"A force of 100 N acts on an area of 20 mm². Find the normal stress.",o:["2 MPa","5 MPa","20 MPa","50 MPa"],a:1,e:"Stress = Force / Area = 100 / (20 × 10⁻⁶) = 5 MPa."},
+ {q:"Which equation represents an ideal gas?",o:["PV = mRT","P = mVRT","PT = mRV","PV = RT/m"],a:0,e:"The ideal gas equation is PV = mRT."},
+ {q:"For steady incompressible flow in a pipe without branches, what remains constant?",o:["Velocity","Pressure","Mass flow rate","Temperature"],a:2,e:"Mass flow rate remains constant. For incompressible flow, A₁V₁ = A₂V₂."},
+ {q:"What is the SI unit of thermal conductivity?",o:["W/(m K)","W/(m² K)","J/(kg K)","W/K"],a:0,e:"Thermal conductivity is measured in watts per metre-kelvin."},
+ {q:"The area under a velocity-time graph represents:",o:["Acceleration","Displacement","Jerk","Force"],a:1,e:"Displacement is the integral of velocity with respect to time."}
+];
+
+let qIndex=0,score=0,answered=false;
+
+function renderQuestion(){
+ const q=questions[qIndex];
+ answered=false;
+ document.getElementById("qNumber").textContent="Question "+(qIndex+1)+" of "+questions.length;
+ document.getElementById("question").textContent=q.q;
+ document.getElementById("feedback").textContent="";
+ document.getElementById("next").disabled=true;
+ document.getElementById("options").innerHTML="";
+ q.o.forEach((option,i)=>{
+  const btn=document.createElement("button");
+  btn.className="option";
+  btn.textContent=String.fromCharCode(65+i)+". "+option;
+  btn.onclick=()=>selectAnswer(i,btn);
+  document.getElementById("options").appendChild(btn);
+ });
+ document.getElementById("score").textContent="Score: "+score;
+}
+
+function selectAnswer(i,btn){
+ if(answered)return;
+ answered=true;
+ const q=questions[qIndex];
+ if(i===q.a){
+  score++;
+  btn.classList.add("correct");
+  document.getElementById("feedback").textContent="Correct! "+q.e;
+ }else{
+  btn.classList.add("wrong");
+  document.querySelectorAll(".option")[q.a].classList.add("correct");
+  document.getElementById("feedback").textContent="Incorrect. "+q.e;
+ }
+ document.getElementById("score").textContent="Score: "+score;
+ document.getElementById("next").disabled=false;
+}
+
+function nextQuestion(){
+ if(!answered)return;
+ if(qIndex===questions.length-1){
+  document.getElementById("feedback").textContent="Quiz completed! Your score: "+score+"/"+questions.length+". Restart the quiz to try again.";
+  document.getElementById("next").disabled=true;
+  return;
+ }
+ qIndex++;
+ renderQuestion();
+}
+
+const formulas=[
+["Normal Stress","σ = F/A","Force divided by cross-sectional area."],
+["Normal Strain","ε = ΔL/L","Change in length divided by original length."],
+["Hooke's Law","σ = Eε","For linear elastic material."],
+["Bending Equation","M/I = σ/y = E/R","For elastic beam bending."],
+["Torsion Equation","T/J = τ/r = Gθ/L","For circular shafts in elastic torsion."],
+["Continuity Equation","A₁V₁ = A₂V₂","Steady incompressible flow."],
+["Bernoulli Equation","P/ρg + V²/2g + z = constant","Ideal steady incompressible flow along a streamline."],
+["Heat Conduction","Q̇ = −kA(dT/dx)","Fourier's law of heat conduction."],
+["Ideal Gas","PV = mRT","Ideal gas equation of state."],
+["Thermal Efficiency","η = Wnet/Qin","Heat engine thermal efficiency."]
+];
+
+function renderFormulas(filter=""){
+ const box=document.getElementById("formulaList");
+ box.innerHTML="";
+ formulas.filter(f=>f.join(" ").toLowerCase().includes(filter.toLowerCase())).forEach(f=>{
+  const div=document.createElement("div");
+  div.className="formula";
+  div.innerHTML="<b>"+f[0]+"</b><div class='equation'></div><small class='muted'></small>";
+  div.querySelector(".equation").textContent=f[1];
+  div.querySelector("small").textContent=f[2];
+  box.appendChild(div);
+ });
+}
+
+document.getElementById("search").addEventListener("input",e=>renderFormulas(e.target.value));
+
+const weeks=[
+["Week 1–2","Thermodynamics and Mathematics","Properties, laws, entropy, cycles and mathematics revision."],
+["Week 3","Engineering Mechanics and SOM","Equilibrium, friction, stress, SFD, BMD and bending."],
+["Week 4","SOM, TOM and Machine Design","Torsion, deflection, mechanisms, gears and vibrations."],
+["Week 5","Fluid Mechanics","Fluid statics, continuity, Bernoulli and pipe flow."],
+["Week 6","Heat Transfer","Conduction, convection, radiation and heat exchangers."],
+["Week 7","Manufacturing","Casting, forming, joining, machining and metrology."],
+["Week 8","Materials and Industrial Engineering","Materials, inventory, quality and operations research."],
+["Week 9–10","Syllabus Completion and PYQs","Cover remaining official syllabus and solve previous-year questions."],
+["Week 11–12","Mock Tests and Revision","Timed tests, error analysis and formula revision."]
+];
+
+document.getElementById("weekList").innerHTML=weeks.map(w=>"<div class='card'><b>"+w[0]+" · "+w[1]+"</b><p class='muted'>"+w[2]+"</p></div>").join("");
+
+document.getElementById("today").textContent=new Date().toDateString();
+renderSyllabus();
+renderQuestion();
+renderFormulas();
+</script>
+</body>
+</html>
