@@ -4,368 +4,885 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101827">
-<title>GreatGuru | GATE Mechanical</title>
+<title>GreatGuru | AI GATE Mechanical Personal Teacher</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#17243a}
-header{background:#101827;color:white;padding:17px 20px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:23px;font-weight:bold;color:#83b2ff}
-header small{font-size:10px;color:#c5d2e5;display:block;letter-spacing:2px}
-.hero{background:linear-gradient(120deg,#14243c,#315a91);color:white;padding:30px 22px;border-radius:0 0 22px 22px}
-.hero h1{font-size:32px;margin:8px 0}
-.hero p{color:#d5e2f4;line-height:1.5}
-button{cursor:pointer}
-.start{background:#4380ed;color:white;border:0;padding:12px 18px;border-radius:9px;font-weight:bold}
-nav{display:flex;overflow-x:auto;gap:7px;padding:15px 12px;background:#fff}
-nav button{border:0;background:#edf1f8;padding:11px 14px;border-radius:9px;white-space:nowrap;font-weight:bold;color:#40516c}
-nav button.active{background:#dceaff;color:#2459b5}
-main{max-width:900px;margin:auto;padding:16px}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f2f5fa;color:#17243a;line-height:1.5}
+header{background:#101827;color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.logo{font-size:22px;font-weight:800;color:#83b2ff}
+header small{font-size:10px;color:#c5d2e5;display:block;letter-spacing:1.8px}
+.header-btn{background:#1e293b;color:#cbd5e1;border:1px solid #334155;padding:7px 11px;border-radius:8px;font-size:12px;font-weight:600}
+.hero{background:linear-gradient(125deg,#101827,#1e3a6e,#2b5899);color:white;padding:24px 20px;border-radius:0 0 22px 22px}
+.hero h1{font-size:28px;margin:6px 0}
+.hero p{color:#d5e2f4;font-size:14px;margin:6px 0 14px}
+button{cursor:pointer;font-family:inherit}
+.start{background:#3b82f6;color:white;border:0;padding:11px 16px;border-radius:9px;font-weight:700;font-size:14px}
+.start:disabled{background:#94a3b8;cursor:not-allowed}
+.secondary{background:#e2e8f0;color:#1e293b;border:0;padding:9px 13px;border-radius:8px;font-weight:600;font-size:13px}
+nav{display:flex;overflow-x:auto;gap:6px;padding:12px;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:63px;z-index:90}
+nav button{border:0;background:#edf1f8;padding:9px 13px;border-radius:9px;white-space:nowrap;font-weight:700;font-size:13px;color:#40516c}
+nav button.active{background:#2563eb;color:#fff}
+main{max-width:920px;margin:auto;padding:14px}
 section.page{display:none}
 section.page.active{display:block}
-h2{font-size:23px}
-.card{background:white;padding:18px;margin:12px 0;border-radius:14px;box-shadow:0 3px 12px #1d355710}
-.card h3{margin-top:0}
-.muted{color:#687991;font-size:13px}
-.task{display:block;padding:9px 0;border-bottom:1px solid #eee;font-size:14px}
-.task input{margin-right:9px}
-.bar{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden;margin:12px 0}
-.fill{height:100%;width:0;background:#3475dc}
-.subject{background:white;border-radius:12px;margin:10px 0;padding:14px}
-.subject summary{font-weight:bold;cursor:pointer}
-.topic{display:block;font-size:13px;padding:8px 0;color:#40516c}
-.topic input{margin-right:8px}
-.option{display:block;width:100%;text-align:left;padding:13px;margin:8px 0;border:1px solid #dce3ed;border-radius:9px;background:white;font-size:14px}
-.option.correct{background:#e4f8ee;border-color:#15966b}
+h2{font-size:21px;margin:8px 0 12px}
+.card{background:white;padding:16px;margin:12px 0;border-radius:14px;box-shadow:0 3px 12px rgba(29,53,87,0.07)}
+.card h3{margin-top:0;font-size:17px}
+.muted{color:#64748b;font-size:13px}
+.task{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+.task input{margin-right:10px;width:16px;height:16px}
+.bar{height:10px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:10px 0}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#10b981);transition:width 0.3s}
+
+/* AI Classroom Chat */
+.cmd-bar{display:flex;overflow-x:auto;gap:6px;padding:8px 0 12px}
+.cmd-chip{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:7px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.cmd-chip:hover{background:#dbeafe}
+.chat-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;height:440px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:92%;padding:12px 14px;border-radius:12px;font-size:14px;white-space:pre-wrap;word-wrap:break-word}
+.msg.ai{background:#ffffff;border:1px solid #e2e8f0;align-self:flex-start;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.msg.user{background:#2563eb;color:white;align-self:flex-end}
+.msg-meta{font-size:11px;font-weight:700;margin-bottom:4px;opacity:0.75}
+.chat-input-row{display:flex;gap:8px;margin-top:10px}
+.chat-input-row textarea{flex:1;padding:11px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;resize:none;height:48px;font-family:inherit}
+.status-pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;background:#dcfce7;color:#166534}
+
+/* Syllabus Mastery */
+.subject{background:white;border-radius:12px;margin:10px 0;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.subject summary{font-weight:700;cursor:pointer;font-size:15px}
+.topic-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.topic-actions{display:flex;gap:6px;align-items:center}
+select.mastery-select{padding:5px 8px;border-radius:7px;border:1px solid #cbd5e1;font-size:12px;font-weight:600;background:#f8fafc}
+.teach-btn{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:5px 9px;border-radius:7px;font-size:12px;font-weight:700}
+
+/* Practice & Mistakes */
+.option{display:block;width:100%;text-align:left;padding:12px;margin:8px 0;border:1px solid #dce3ed;border-radius:9px;background:white;font-size:14px}
+.option.correct{background:#e4f8ee;border-color:#15966b;font-weight:600}
 .option.wrong{background:#fff0f0;border-color:#d65b5b}
-.formula{padding:13px 0;border-bottom:1px solid #e9edf3}
-.equation{font-size:19px;color:#285db1;margin-top:5px}
-input[type=search]{width:100%;padding:13px;border:1px solid #dce3ed;border-radius:9px;font-size:15px}
-footer{text-align:center;color:#718096;padding:25px;font-size:12px}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;margin-right:6px}
+
+/* Visualizer */
+canvas{width:100%;max-width:100%;background:#0f172a;border-radius:12px;display:block;margin:10px 0}
+.sim-controls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}
+.slider-group{margin:8px 0;font-size:13px}
+.slider-group input{width:100%}
+.subtitle-box{background:#1e293b;color:#f8fafc;padding:10px 14px;border-radius:9px;font-size:13px;margin-top:8px;border-left:4px solid #38bdf8}
+
+/* Formulas & Inputs */
+.formula{padding:12px 0;border-bottom:1px solid #e9edf3}
+.equation{font-size:18px;font-weight:700;color:#1d4ed8;margin:4px 0}
+input[type=search],input[type=text],input[type=password]{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;margin:6px 0}
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.stat-box{background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;text-align:center}
+.stat-box b{font-size:20px;display:block;color:#1e3a8a}
+footer{text-align:center;color:#64748b;padding:24px;font-size:12px}
 </style>
 </head>
 <body>
 
 <header>
- <div><div class="logo">GreatGuru</div><small>GATE MECHANICAL</small></div>
- <span>📘 Study Hub</span>
+ <div><div class="logo">GreatGuru</div><small>AI GATE ME PERSONAL TEACHER</small></div>
+ <button class="header-btn" onclick="showPage('settings')">⚙️ AI Setup</button>
 </header>
 
 <div class="hero">
- <p>YOUR GATE PREPARATION PARTNER</p>
- <h1>Learn. Practise.<br>Achieve.</h1>
- <p>Build strong fundamentals and prepare for GATE Mechanical Engineering one day at a time.</p>
- <button class="start" onclick="showPage('dashboard')">Start studying →</button>
+ <p style="font-size:11px;letter-spacing:1.5px;margin:0;opacity:0.9">12-STEP STRUCTURED COACHING ENGINE</p>
+ <h1>Zero to GATE Ranker.</h1>
+ <p>Systematic GATE 2027 Mechanical Engineering lessons from absolute basics, interactive visualizations, PYQ mastery, and mistake tracking.</p>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button class="start" onclick="launchCommand('START CLASS')">▶ START CLASS</button>
+  <button class="secondary" onclick="showPage('visualizer')">🎛️ Visual Lab</button>
+ </div>
 </div>
 
 <nav>
- <button class="active" onclick="showPage('dashboard',this)">Home</button>
- <button onclick="showPage('syllabus',this)">Syllabus</button>
- <button onclick="showPage('practice',this)">Practice</button>
- <button onclick="showPage('formulas',this)">Formulas</button>
- <button onclick="showPage('plan',this)">Study Plan</button>
+ <button class="active" onclick="showPage('classroom',this)">🎓 AI Teacher</button>
+ <button onclick="showPage('dashboard',this)">📊 Dashboard</button>
+ <button onclick="showPage('syllabus',this)">📚 Syllabus</button>
+ <button onclick="showPage('visualizer',this)">🎛️ Visual Lab</button>
+ <button onclick="showPage('practice',this)">✍️ Practice & PYQs</button>
+ <button onclick="showPage('revision',this)">🔁 Revision & Errors</button>
+ <button onclick="showPage('formulas',this)">📐 Formulas</button>
 </nav>
 
 <main>
 
-<section id="dashboard" class="page active">
- <h2>Welcome to your study room 👋</h2>
+<!-- 1. AI CLASSROOM MODE -->
+<section id="classroom" class="page active">
+ <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+  <h2>Structured Classroom</h2>
+  <span id="currentLessonBadge" class="status-pill">Topic: Engineering Mathematics → Linear Algebra</span>
+ </div>
+ <p class="muted">Tap any classroom command below or reply to GreatGuru's questions.</p>
+
+ <div class="cmd-bar">
+  <button class="cmd-chip" onclick="sendClassroomMessage('START CLASS')">▶ START CLASS</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('CONTINUE')">⏭ CONTINUE</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('EXPLAIN SIMPLY')">💡 EXPLAIN SIMPLY</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('SHOW DIAGRAM')">📐 SHOW DIAGRAM</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('SOLVE')">🧮 SOLVE</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('PYQ MODE')">🎯 PYQ MODE</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('TEST ME')">📝 TEST ME</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('REVISION')">🔁 REVISION</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('WEAK TOPICS')">⚠️ WEAK TOPICS</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('NEXT TOPIC')">➡ NEXT TOPIC</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('EXAM MODE')">⏱ EXAM MODE</button>
+  <button class="cmd-chip" onclick="sendClassroomMessage('ANALYZE MY MISTAKES')">🔍 ANALYZE MISTAKES</button>
+ </div>
+
+ <div class="chat-box" id="chatBox"></div>
+
+ <div class="chat-input-row">
+  <textarea id="userInput" placeholder="Type your answer, doubt, or classroom command..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleSend();}"></textarea>
+  <button class="start" id="sendBtn" onclick="handleSend()">Send</button>
+ </div>
+ <div style="display:flex;justify-content:space-between;margin-top:8px">
+  <span class="muted" id="aiConnectionStatus">Backend: Render (gateguru-1p9k.onrender.com)</span>
+  <button class="secondary" style="padding:4px 9px;font-size:11px" onclick="clearChat()">Reset Lesson Chat</button>
+ </div>
+</section>
+
+<!-- 2. DASHBOARD -->
+<section id="dashboard" class="page">
+ <h2>Study Room & Progress 👋</h2>
  <p class="muted" id="today"></p>
 
  <div class="card">
-  <h3>📊 Syllabus Progress</h3>
+  <h3>📊 5-Stage Syllabus Mastery</h3>
   <h2 id="progressText">0%</h2>
   <div class="bar"><div class="fill" id="progressBar"></div></div>
-  <p class="muted" id="topicCount">0 topics completed</p>
+  <div class="grid-stats" id="masteryBreakdown"></div>
  </div>
 
  <div class="card">
-  <h3>⏰ Daily Study Routine</h3>
-  <label class="task"><input type="checkbox"> 2 hours – Mechanical core subjects</label>
-  <label class="task"><input type="checkbox"> 1 hour – Numerical problems and PYQs</label>
-  <label class="task"><input type="checkbox"> 1 hour – Engineering Mathematics</label>
-  <label class="task"><input type="checkbox"> 45 minutes – General Aptitude</label>
-  <label class="task"><input type="checkbox"> 45 minutes – Revision and error notebook</label>
-  <p class="muted">Total target: 5 hours 30 minutes. Adjust according to your day.</p>
- </div>
-
- <div class="card">
-  <h3>🎯 Today's target</h3>
-  <p>Understand one concept, solve numerical problems and revise what you learned.</p>
-  <button class="start" onclick="showPage('syllabus')">Explore syllabus</button>
+  <h3>⏰ Daily 5.5-Hour GATE Schedule</h3>
+  <label class="task"><input type="checkbox"> <b>2.5 hrs</b> – Core Subject Classroom (12-Step Lesson)</label>
+  <label class="task"><input type="checkbox"> <b>1.5 hrs</b> – Numerical Problem-Solving (Level 1 → Level 3)</label>
+  <label class="task"><input type="checkbox"> <b>1.0 hr</b> – Verified PYQs & Spaced Revision</label>
+  <label class="task"><input type="checkbox"> <b>45 mins</b> – Engineering Mathematics / General Aptitude</label>
+  <p class="muted">Consistency beats intensity. Complete one topic thoroughly before moving forward.</p>
  </div>
 </section>
 
+<!-- 3. SYLLABUS TRACKER -->
 <section id="syllabus" class="page">
- <h2>GATE Mechanical Syllabus</h2>
- <p class="muted">Tick a topic after studying it. Progress is saved in this browser.</p>
+ <h2>Official GATE 2027 ME Syllabus</h2>
+ <p class="muted">Update your mastery status or tap <b>Teach</b> to start the 12-step AI lesson for any topic.</p>
  <div id="syllabusContainer"></div>
 </section>
 
-<section id="practice" class="page">
- <h2>Practice Zone</h2>
- <p class="muted">Starter concept questions with explanations. These are original practice questions, not official PYQs.</p>
+<!-- 4. ENGINEERING VISUALIZATION & ANIMATION LAB -->
+<section id="visualizer" class="page">
+ <h2>Interactive Engineering Simulations</h2>
+ <p class="muted">Adjust parameters in real time with Play, Pause, Step-by-Step, and Speed controls.</p>
+
  <div class="card">
-  <p id="qNumber" class="muted"></p>
-  <h3 id="question"></h3>
-  <div id="options"></div>
-  <p id="feedback"></p>
-  <button class="start" id="next" onclick="nextQuestion()" disabled>Next Question →</button>
-  <p id="score" class="muted">Score: 0</p>
+  <label><b>Select Simulation:</b></label>
+  <select id="simSelect" class="mastery-select" style="width:100%;padding:10px;margin:8px 0;font-size:14px" onchange="switchSim()">
+   <option value="otto">1. 4-Stroke Otto Cycle Engine + Live P-V Diagram</option>
+   <option value="slider">2. Slider-Crank Mechanism (Position, Velocity & Acceleration)</option>
+   <option value="beam">3. Simply Supported Beam (Live SFD & BMD)</option>
+  </select>
+
+  <canvas id="simCanvas" width="800" height="360"></canvas>
+
+  <div class="sim-controls">
+   <button class="start" onclick="simState.playing=true">▶ Play</button>
+   <button class="secondary" onclick="simState.playing=false">⏸ Pause</button>
+   <button class="secondary" onclick="stepSim()">⏭ Step (+15°)</button>
+   <button class="secondary" onclick="resetSim()">↺ Restart</button>
+   <label class="muted">Speed: <input type="range" id="simSpeed" min="0.2" max="2.5" step="0.1" value="1" style="width:90px"></label>
+  </div>
+
+  <div id="simSliders"></div>
+  <div class="subtitle-box" id="simNarration">Narration: Ready. Press Play or Step to inspect the cycle.</div>
  </div>
 </section>
 
+<!-- 5. PRACTICE & PYQ SYSTEM -->
+<section id="practice" class="page">
+ <h2>Practice & Mistake Categorizer</h2>
+ <p class="muted">Original concept & GATE-level questions. Wrong answers are logged automatically to your Revision & Error Notebook.</p>
+ <div class="card">
+  <div style="margin-bottom:8px">
+   <span class="badge" id="qLevel">Level 1 – Fundamentals</span>
+   <span class="badge" id="qTopicTag">Strength of Materials</span>
+  </div>
+  <p id="qNumber" class="muted"></p>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <div id="feedback" style="margin-top:10px;font-size:14px"></div>
+  <div id="mistakeTagBox" style="display:none;margin-top:10px;padding:10px;background:#fff7ed;border-radius:8px;border:1px solid #fed7aa">
+   <b style="font-size:13px;color:#9a3412">Log Mistake Type for Weak-Topic Analysis:</b>
+   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px" id="mistakeButtons"></div>
+  </div>
+  <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+   <button class="start" id="next" onclick="nextQuestion()" disabled>Next Question →</button>
+   <span id="score" class="muted">Score: 0</span>
+  </div>
+ </div>
+</section>
+
+<!-- 6. SPACED REVISION & ERROR NOTEBOOK -->
+<section id="revision" class="page">
+ <h2>Spaced Revision & Mistake Notebook</h2>
+ <p class="muted">Intervals: Same Day → 1d → 3d → 7d → 14d → 30d. Prioritizes weak concepts and past mistakes.</p>
+
+ <div class="card">
+  <h3>📅 Spaced Revision Queue</h3>
+  <div id="revisionQueueList"></div>
+ </div>
+
+ <div class="card">
+  <h3>⚠️ Recorded Mistakes & Exam Traps</h3>
+  <div id="mistakeLogList"></div>
+  <button class="secondary" style="margin-top:10px" onclick="launchCommand('ANALYZE MY MISTAKES')">Ask GreatGuru to Analyze My Mistakes →</button>
+ </div>
+</section>
+
+<!-- 7. FORMULAS -->
 <section id="formulas" class="page">
- <h2>Formula Book</h2>
- <input type="search" id="search" placeholder="Search formulas...">
+ <h2>GATE ME Formula & Assumption Book</h2>
+ <input type="search" id="search" placeholder="Search formulas, assumptions, or subjects...">
  <div id="formulaList" class="card"></div>
 </section>
 
-<section id="plan" class="page">
- <h2>12-Week Priority Study Plan</h2>
- <p class="muted">A starting framework. Check the official GATE 2027 syllabus and adjust to your exam date.</p>
- <div id="weekList"></div>
+<!-- 8. SETTINGS -->
+<section id="settings" class="page">
+ <h2>AI Backend Configuration</h2>
+ <p class="muted">GreatGuru connects to your Render server by default. If your Render free tier is sleeping or you want direct browser calls, enter your free Google Gemini API key below.</p>
+ <div class="card">
+  <label><b>Render FastAPI Endpoint:</b></label>
+  <input type="text" id="backendUrlInput" value="https://gateguru-1p9k.onrender.com/chat">
+  <label><b>Optional Direct Gemini API Key (Fallback):</b></label>
+  <input type="password" id="geminiKeyInput" placeholder="AIzaSy... (Stored only in your browser localStorage)">
+  <button class="start" onclick="saveSettings()">Save Configuration</button>
+  <p id="settingsSavedMsg" class="muted" style="color:#15803d"></p>
+ </div>
 </section>
 
 </main>
 
 <footer>
- <b>GreatGuru</b><br>
- Learn honestly. Practise consistently. Improve every week.<br><br>
- <a href="https://gate2027.iitm.ac.in/exam_papers_and_syllabus" target="_blank">Official GATE 2027 syllabus ↗</a>
+ <b>GreatGuru</b> · Personal AI GATE Mechanical Engineering Teacher<br>
+ <a href="https://gate2027.iitm.ac.in/exam_papers_and_syllabus" target="_blank">Official GATE 2027 ME Syllabus ↗</a>
 </footer>
 
 <script>
-const subjects = [
-["Engineering Mathematics",[
-"Linear Algebra",
-"Calculus",
-"Differential Equations",
-"Vector Calculus",
-"Numerical Methods",
-"Probability and Statistics"
-]],
-["Engineering Mechanics and SOM",[
-"Free Body Diagrams and Equilibrium",
-"Friction",
-"Kinematics and Dynamics",
-"Stress and Strain",
-"Shear Force and Bending Moment",
-"Bending and Torsion",
-"Beam Deflection",
-"Columns and Energy Methods"
-]],
-["Theory of Machines and Machine Design",[
-"Mechanisms",
-"Gears and Gear Trains",
-"Cams and Governors",
-"Balancing",
-"Free and Forced Vibrations",
-"Failure Theories",
-"Shafts, Bearings, Springs and Joints"
-]],
-["Fluid Mechanics",[
-"Fluid Properties and Statics",
-"Continuity Equation",
-"Bernoulli Equation",
-"Momentum Equation",
-"Dimensional Analysis",
-"Pipe Flow",
-"Boundary Layers"
-]],
-["Thermodynamics",[
-"Properties of Pure Substances",
-"First Law of Thermodynamics",
-"Second Law of Thermodynamics",
-"Entropy",
-"Availability",
-"Power Cycles",
-"Refrigeration Cycles"
-]],
-["Heat Transfer",[
-"Conduction",
-"Convection",
-"Radiation",
-"Heat Exchangers",
-"Boiling and Condensation"
-]],
-["Manufacturing and Materials",[
-"Engineering Materials",
-"Casting",
-"Metal Forming",
-"Welding and Joining",
-"Machining",
-"Tool Life and Cutting Forces",
-"Metrology",
-"Additive Manufacturing"
-]],
-["Industrial Engineering",[
-"Production Planning",
-"Inventory Control",
-"Operations Research",
-"Linear Programming",
-"Quality Control",
-"Reliability and Maintenance"
-]],
-["General Aptitude",[
-"Verbal Aptitude",
-"Quantitative Aptitude",
-"Analytical Reasoning",
-"Spatial Aptitude"
-]]
+// ==================== 1. FULL GREATGURU SYSTEM PROMPT ====================
+const GREATGURU_SYSTEM_PROMPT = `GREATGURU – AI GATE MECHANICAL ENGINEERING PERSONAL TEACHER
+You are GreatGuru, an advanced AI personal teacher, mentor, and exam preparation assistant specifically designed to help students prepare for GATE Mechanical Engineering (ME).
+Your primary mission is to help a student understand the entire GATE Mechanical Engineering syllabus from absolute basics and progressively reach the level required to solve difficult GATE questions.
+You are a structured AI coaching teacher who proactively teaches, tests, evaluates, corrects mistakes, tracks progress, and adapts teaching according to the student's understanding.
+
+STUDENT PROFILE:
+- B.Tech Mechanical Engineering student preparing for GATE ME.
+- May have weak fundamentals or missed college classes; wants explanations from absolute zero in simple, clear English.
+- Studies 5–6 hours daily, cannot afford expensive coaching, needs a complete preparation system.
+- Never assume prior knowledge unless demonstrated.
+
+STRUCTURED CLASSROOM MODE (SUBJECT -> CHAPTER -> TOPIC -> SUBTOPIC -> LESSON):
+Follow this exact 12-step sequence progressively (do not dump all 12 steps at once—teach interactively, pausing at Step 8 to ask a question and wait for the student's reply):
+Step 1: Introduction (What it is, why it matters, real-life use, GATE weightage).
+Step 2: Prerequisite Check (Verify basics; teach briefly if missing).
+Step 3: Teach from Zero (Simple language, real-life analogies, everyday engineering examples).
+Step 4: Visual Explanation (ASCII diagrams, flowcharts, tables, vector sketches).
+Step 5: Technical Explanation (Engineering terms, mathematical relationships, assumptions, physical meaning).
+Step 6: Formula Derivation (Where it comes from, variables, SI units, assumptions, valid range).
+Step 7: Solved Examples (Very basic -> Intermediate -> GATE-level numerical -> Difficult conceptual).
+Step 8: Interactive Understanding Check (Ask 1–2 questions and STOP to wait for the student's answer. If wrong, diagnose exact misconception and explain with a new analogy).
+Step 9: GATE PYQs (Clearly label "Official GATE PYQ [Year, Marks]" vs "Original AI Practice Question". NEVER fabricate PYQ years. Include concept tested, common trap, and faster shortcut).
+Step 10: Exam Traps (Sign conventions, unit conversions, invalid assumptions).
+Step 11: Mini-Test (5–10 mixed MCQ/MSQ/NAT questions; withhold answers until attempted).
+Step 12: Revision Summary (Key concepts, formulas, assumptions, exam traps).
+
+CLASSROOM COMMANDS:
+- "START CLASS": Begin the next lesson in the syllabus from Step 1–4 and ask a prerequisite/concept check question.
+- "CONTINUE": Proceed to the next step of the active lesson.
+- "EXPLAIN SIMPLY": Re-explain using simpler English and a fresh real-world analogy.
+- "SHOW DIAGRAM": Draw a clear ASCII engineering diagram/graph and explain it.
+- "SOLVE": Solve the active problem step by step with units and trap warnings.
+- "PYQ MODE": Present verified GATE PYQs with year, marks, concept tested, and trap analysis.
+- "TEST ME": Start an interactive Mini-Test (MCQ, MSQ, NAT) without revealing answers first.
+- "REVISION": Conduct spaced-repetition active recall on weak/studied topics.
+- "WEAK TOPICS": Analyze the student's logged mistakes and weak topics.
+- "NEXT TOPIC": Verify current topic understanding before advancing to the next syllabus topic.
+- "EXAM MODE": Timed exam simulation with zero hints.
+- "ANALYZE MY MISTAKES": Categorize mistakes (Conceptual, Formula, Calculation, Unit, Question-Reading, Time-Management) and prescribe fixes.
+
+RULES:
+Never randomly jump subjects. Never skip fundamentals. Never provide fake PYQs. Always verify units and assumptions. Optimize for maximum GATE score improvement.`;
+
+// ==================== 2. GATE 2027 ME SYLLABUS & 5-STAGE MASTERY ====================
+const syllabusData = [
+ ["Engineering Mathematics", ["Linear Algebra", "Calculus", "Differential Equations", "Vector Calculus", "Numerical Methods", "Probability and Statistics"]],
+ ["Engineering Mechanics", ["Force Systems & Equilibrium", "Friction", "Kinematics & Kinetics of Particles", "Rigid Body Dynamics"]],
+ ["Strength of Materials", ["Stress and Strain", "Axial & Thermal Loading", "Shear Force & Bending Moment", "Bending Stress", "Torsion", "Beam Deflection", "Mohr's Circle", "Failure Theories", "Columns & Pressure Vessels"]],
+ ["Theory of Machines", ["Mechanisms & Kinematics", "Velocity & Acceleration Analysis", "Gears & Gear Trains", "Cams & Governors", "Flywheels", "Balancing", "Free, Forced & 2-DOF Vibrations"]],
+ ["Machine Design", ["Design Principles & Fatigue", "Shafts & Keys", "Rolling & Sliding Bearings", "Helical Springs", "Bolted & Welded Joints"]],
+ ["Fluid Mechanics", ["Fluid Properties & Hydrostatics", "Fluid Kinematics & Continuity", "Bernoulli & Momentum Equations", "Dimensional Analysis", "Pipe Flow", "Boundary Layers", "Turbines & Pumps"]],
+ ["Thermodynamics", ["Basic Concepts & Pure Substances", "First Law of Thermodynamics", "Second Law & Entropy", "Availability", "Power Cycles (Otto, Diesel, Brayton, Rankine)", "Gas Mixtures & Combustion Basics"]],
+ ["Heat Transfer", ["Conduction", "Convection", "Radiation", "Heat Exchangers", "Boiling and Condensation"]],
+ ["Refrigeration & Air Conditioning", ["Refrigeration Cycles & Refrigerants", "Compressors & Cooling Systems", "Psychrometry & AC Processes"]],
+ ["Manufacturing Engineering", ["Engineering Materials & Phase Diagrams", "Heat Treatment & NDT", "Casting", "Metal Forming", "Welding & Joining", "Machining & Tool Life", "CNC & Additive Manufacturing", "Metrology"]],
+ ["Industrial Engineering", ["Production Planning & Control", "Inventory Control", "Operations Research & LPP", "Queuing & Scheduling", "Quality Control & Six Sigma"]]
 ];
 
-const storageKey="greatguru_completed_v1";
-let completed=JSON.parse(localStorage.getItem(storageKey)||"[]");
+const masteryLevels = [
+ "🔴 Not Started",
+ "🟠 Learning",
+ "🟡 Conceptually Understood",
+ "🔵 Practice Required",
+ "🟢 Mastered"
+];
 
-function renderSyllabus(){
- const box=document.getElementById("syllabusContainer");
- box.innerHTML="";
- subjects.forEach((subject,i)=>{
-  const details=document.createElement("details");
-  details.className="subject";
-  const summary=document.createElement("summary");
-  summary.textContent=subject[0];
-  details.appendChild(summary);
-  subject[1].forEach(topic=>{
-   const label=document.createElement("label");
-   label.className="topic";
-   const check=document.createElement("input");
-   check.type="checkbox";
-   const key=subject[0]+"|"+topic;
-   check.checked=completed.includes(key);
-   check.addEventListener("change",()=>{
-    if(check.checked) completed.push(key);
-    else completed=completed.filter(x=>x!==key);
-    localStorage.setItem(storageKey,JSON.stringify(completed));
-    updateProgress();
-   });
-   label.appendChild(check);
-   label.appendChild(document.createTextNode(topic));
-   details.appendChild(label);
+let masteryMap = JSON.parse(localStorage.getItem("gg_mastery_v2") || "{}");
+let activeTopic = localStorage.getItem("gg_active_topic") || "Engineering Mathematics → Linear Algebra";
+
+function renderSyllabus() {
+ const container = document.getElementById("syllabusContainer");
+ container.innerHTML = "";
+ syllabusData.forEach(([subject, topics]) => {
+  const details = document.createElement("details");
+  details.className = "subject";
+  const masteredCount = topics.filter(t => masteryMap[`${subject}|${t}`] === 4).length;
+  details.innerHTML = `<summary>${subject} <span class="muted">(${masteredCount}/${topics.length} Mastered)</span></summary>`;
+  topics.forEach(topic => {
+   const key = `${subject}|${topic}`;
+   const level = masteryMap[key] || 0;
+   const row = document.createElement("div");
+   row.className = "topic-row";
+   row.innerHTML = `
+    <span>${topic}</span>
+    <div class="topic-actions">
+     <select class="mastery-select" onchange="setMastery('${key}', this.value)">
+      ${masteryLevels.map((lbl, idx) => `<option value="${idx}" ${idx === level ? "selected" : ""}>${lbl}</option>`).join("")}
+     </select>
+     <button class="teach-btn" onclick="startTopicLesson('${subject}', '${topic}')">Teach →</button>
+    </div>`;
+   details.appendChild(row);
   });
-  box.appendChild(details);
+  container.appendChild(details);
  });
- updateProgress();
+ updateDashboardStats();
 }
 
-function updateProgress(){
- const total=subjects.reduce((n,s)=>n+s[1].length,0);
- const percent=Math.round(completed.length/total*100);
- document.getElementById("progressText").textContent=percent+"%";
- document.getElementById("progressBar").style.width=percent+"%";
- document.getElementById("topicCount").textContent=completed.length+" of "+total+" topics completed";
+function setMastery(key, val) {
+ masteryMap[key] = parseInt(val, 10);
+ localStorage.setItem("gg_mastery_v2", JSON.stringify(masteryMap));
+ scheduleRevision(key, parseInt(val, 10));
+ updateDashboardStats();
 }
 
-function showPage(id,button){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- if(button)button.classList.add("active");
- window.scrollTo(0,0);
+function updateDashboardStats() {
+ let total = 0, weightedScore = 0;
+ const counts = [0, 0, 0, 0, 0];
+ syllabusData.forEach(([sub, topics]) => {
+  topics.forEach(t => {
+   total++;
+   const lvl = masteryMap[`${sub}|${t}`] || 0;
+   counts[lvl]++;
+   weightedScore += lvl * 25;
+  });
+ });
+ const pct = Math.round(weightedScore / total);
+ document.getElementById("progressText").textContent = `${pct}%`;
+ document.getElementById("progressBar").style.width = `${pct}%`;
+ document.getElementById("masteryBreakdown").innerHTML = masteryLevels.map((lbl, i) =>
+  `<div class="stat-box"><b>${counts[i]}</b><span class="muted">${lbl}</span></div>`
+ ).join("");
 }
 
-const questions=[
- {q:"A force of 100 N acts on an area of 20 mm². Find the normal stress.",o:["2 MPa","5 MPa","20 MPa","50 MPa"],a:1,e:"Stress = Force / Area = 100 / (20 × 10⁻⁶) = 5 MPa."},
- {q:"Which equation represents an ideal gas?",o:["PV = mRT","P = mVRT","PT = mRV","PV = RT/m"],a:0,e:"The ideal gas equation is PV = mRT."},
- {q:"For steady incompressible flow in a pipe without branches, what remains constant?",o:["Velocity","Pressure","Mass flow rate","Temperature"],a:2,e:"Mass flow rate remains constant. For incompressible flow, A₁V₁ = A₂V₂."},
- {q:"What is the SI unit of thermal conductivity?",o:["W/(m K)","W/(m² K)","J/(kg K)","W/K"],a:0,e:"Thermal conductivity is measured in watts per metre-kelvin."},
- {q:"The area under a velocity-time graph represents:",o:["Acceleration","Displacement","Jerk","Force"],a:1,e:"Displacement is the integral of velocity with respect to time."}
+function startTopicLesson(subject, topic) {
+ activeTopic = `${subject} → ${topic}`;
+ localStorage.setItem("gg_active_topic", activeTopic);
+ document.getElementById("currentLessonBadge").textContent = `Topic: ${activeTopic}`;
+ const key = `${subject}|${topic}`;
+ if (!masteryMap[key]) setMastery(key, 1);
+ showPage("classroom");
+ sendClassroomMessage(`START CLASS on ${activeTopic}. Begin from Step 1 (Introduction), Step 2 (Prerequisite Check), Step 3 (Teach from Zero), and Step 4 (Visual Diagram), then ask me a basic check question.`);
+}
+
+// ==================== 3. AI CLASSROOM ENGINE ====================
+let chatHistory = JSON.parse(localStorage.getItem("gg_chat_v2") || "[]");
+
+function renderChat() {
+ const box = document.getElementById("chatBox");
+ box.innerHTML = "";
+ if (chatHistory.length === 0) {
+  chatHistory.push({
+   role: "ai",
+   text: `Welcome to your GreatGuru Classroom! 👋\n\nCurrent Syllabus Topic: ${activeTopic}\n\nTap "▶ START CLASS" above to begin Step 1 from absolute zero, or select any topic from the Syllabus tab.`
+  });
+ }
+ chatHistory.forEach(m => {
+  const div = document.createElement("div");
+  div.className = `msg ${m.role}`;
+  div.innerHTML = `<div class="msg-meta">${m.role === "ai" ? "GreatGuru Teacher" : "You"}</div>${escapeHtml(m.text)}`;
+  box.appendChild(div);
+ });
+ box.scrollTop = box.scrollHeight;
+}
+
+function escapeHtml(str) {
+ return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function launchCommand(cmd) {
+ showPage("classroom");
+ sendClassroomMessage(cmd);
+}
+
+function handleSend() {
+ const input = document.getElementById("userInput");
+ const text = input.value.trim();
+ if (!text) return;
+ input.value = "";
+ sendClassroomMessage(text);
+}
+
+async function sendClassroomMessage(text) {
+ chatHistory.push({ role: "user", text });
+ renderChat();
+ const sendBtn = document.getElementById("sendBtn");
+ sendBtn.disabled = true;
+ sendBtn.textContent = "Thinking...";
+
+ const mistakeSummary = mistakeLog.length
+  ? `Logged Student Mistakes: ${mistakeLog.map(m => `${m.topic} (${m.type})`).join(", ")}`
+  : "No logged mistakes yet.";
+
+ const contextualPrompt = `${GREATGURU_SYSTEM_PROMPT}\n\nCURRENT ACTIVE TOPIC: ${activeTopic}\n${mistakeSummary}\n\nRECENT CONVERSATION:\n${chatHistory.slice(-8).map(m => `${m.role.toUpperCase()}: ${m.text}`).join("\n")}`;
+
+ const backendUrl = localStorage.getItem("gg_backend_url") || "https://gateguru-1p9k.onrender.com/chat";
+ const directKey = localStorage.getItem("gg_gemini_key") || "";
+
+ let reply = "";
+ try {
+  // 1. Try Render FastAPI Backend
+  const res = await fetch(backendUrl, {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({
+    message: text,
+    system_prompt: contextualPrompt,
+    topic: activeTopic
+   })
+  });
+  if (!res.ok) throw new Error("Render backend sleeping or unreachable");
+  const data = await res.json();
+  reply = data.reply || data.response || data.answer || JSON.stringify(data);
+  document.getElementById("aiConnectionStatus").textContent = "Connected: Render Backend ✅";
+ } catch (err) {
+  // 2. Fallback to Direct Gemini API if user provided free API key
+  if (directKey) {
+   try {
+    const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(directKey)}`, {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({
+      systemInstruction: { parts: [{ text: contextualPrompt }] },
+      contents: [{ role: "user", parts: [{ text }] }]
+     })
+    });
+    const gData = await gRes.json();
+    reply = gData.candidates?.[0]?.content?.parts?.[0]?.text || "No response received from Gemini API.";
+    document.getElementById("aiConnectionStatus").textContent = "Connected: Direct Gemini API ✅";
+   } catch (gErr) {
+    reply = "Could not reach Render backend or Direct Gemini API. Check your internet or tap '⚙️ AI Setup' at the top right.";
+   }
+  } else {
+   reply = "⚠️ Your Render backend (gateguru-1p9k.onrender.com) is currently waking up or offline.\n\nTip: Wait 30 seconds and retry, OR tap '⚙️ AI Setup' at the top right to paste your free Gemini API key for instant zero-wait responses.";
+  }
+ }
+
+ chatHistory.push({ role: "ai", text: reply });
+ localStorage.setItem("gg_chat_v2", JSON.stringify(chatHistory.slice(-30)));
+ renderChat();
+ sendBtn.disabled = false;
+ sendBtn.textContent = "Send";
+}
+
+function clearChat() {
+ chatHistory = [];
+ localStorage.removeItem("gg_chat_v2");
+ renderChat();
+}
+
+// ==================== 4. INTERACTIVE SIMULATION ENGINE ====================
+const simState = {
+ type: "otto",
+ playing: false,
+ angle: 0,
+ cr: 8,
+ crankR: 45,
+ rodL: 140,
+ loadP: 10,
+ loadPos: 0.5
+};
+
+function switchSim() {
+ simState.type = document.getElementById("simSelect").value;
+ simState.angle = 0;
+ renderSimSliders();
+ drawSim();
+}
+
+function renderSimSliders() {
+ const box = document.getElementById("simSliders");
+ if (simState.type === "otto") {
+  box.innerHTML = `<div class="slider-group">Compression Ratio (r): <b id="crVal">${simState.cr}</b>
+   <input type="range" min="6" max="12" step="0.5" value="${simState.cr}" oninput="simState.cr=+this.value;document.getElementById('crVal').textContent=this.value;drawSim()"></div>`;
+ } else if (simState.type === "slider") {
+  box.innerHTML = `<div class="slider-group">Crank Radius r (mm): <b id="rVal">${simState.crankR}</b>
+   <input type="range" min="25" max="65" value="${simState.crankR}" oninput="simState.crankR=+this.value;document.getElementById('rVal').textContent=this.value;drawSim()"></div>
+   <div class="slider-group">Connecting Rod L (mm): <b id="lVal">${simState.rodL}</b>
+   <input type="range" min="100" max="200" value="${simState.rodL}" oninput="simState.rodL=+this.value;document.getElementById('lVal').textContent=this.value;drawSim()"></div>`;
+ } else {
+  box.innerHTML = `<div class="slider-group">Point Load P (kN): <b id="pVal">${simState.loadP}</b>
+   <input type="range" min="2" max="50" value="${simState.loadP}" oninput="simState.loadP=+this.value;document.getElementById('pVal').textContent=this.value;drawSim()"></div>
+   <div class="slider-group">Load Position (a / L): <b id="posVal">${simState.loadPos}</b>
+   <input type="range" min="0.1" max="0.9" step="0.05" value="${simState.loadPos}" oninput="simState.loadPos=+this.value;document.getElementById('posVal').textContent=this.value;drawSim()"></div>`;
+ }
+}
+
+function stepSim() {
+ simState.playing = false;
+ simState.angle = (simState.angle + 15) % 720;
+ drawSim();
+}
+
+function resetSim() {
+ simState.playing = false;
+ simState.angle = 0;
+ drawSim();
+}
+
+function drawSim() {
+ const canvas = document.getElementById("simCanvas");
+ const ctx = canvas.getContext("2d");
+ ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+ if (simState.type === "otto") {
+  // 4-Stroke Engine (0-720 deg) + P-V Diagram
+  const cycleAngle = simState.angle % 720;
+  const strokeIdx = Math.floor(cycleAngle / 180);
+  const strokeNames = ["1. INTAKE (0°–180°)", "2. COMPRESSION (180°–360°)", "3. POWER EXPANSION (360°–540°)", "4. EXHAUST (540°–720°)"];
+  const rad = (cycleAngle * Math.PI) / 180;
+  const pistonOffset = (1 - Math.cos(rad)) * 55; // 0 at TDC, 110 at BDC
+
+  // Cylinder
+  ctx.strokeStyle = "#94a3b8";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(110, 60, 120, 210);
+
+  // Gas color
+  const gasColors = ["rgba(56,189,248,0.28)", "rgba(251,191,36,0.38)", "rgba(239,68,68,0.48)", "rgba(148,163,184,0.32)"];
+  ctx.fillStyle = gasColors[strokeIdx];
+  ctx.fillRect(112, 62, 116, 40 + pistonOffset);
+
+  // Valves
+  ctx.fillStyle = strokeIdx === 0 ? "#22c55e" : "#ef4444";
+  ctx.fillRect(130, strokeIdx === 0 ? 56 : 48, 28, 8); // Intake
+  ctx.fillStyle = strokeIdx === 3 ? "#22c55e" : "#ef4444";
+  ctx.fillRect(182, strokeIdx === 3 ? 56 : 48, 28, 8); // Exhaust
+
+  // Piston & Crank
+  const pistonY = 102 + pistonOffset;
+  ctx.fillStyle = "#cbd5e1";
+  ctx.fillRect(114, pistonY, 112, 34);
+  const crankX = 170, crankY = 295, r = 38;
+  const pinX = crankX + r * Math.sin(rad);
+  const pinY = crankY - r * Math.cos(rad);
+  ctx.strokeStyle = "#38bdf8";
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(170, pistonY + 17); ctx.lineTo(pinX, pinY); ctx.stroke();
+  ctx.beginPath(); ctx.arc(crankX, crankY, r, 0, Math.PI * 2); ctx.strokeStyle = "#475569"; ctx.lineWidth = 2; ctx.stroke();
+
+  // P-V Diagram on right
+  ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(410, 60); ctx.lineTo(410, 300); ctx.lineTo(740, 300); ctx.stroke();
+  ctx.fillStyle = "#f8fafc"; ctx.font = "14px Arial";
+  ctx.fillText("Pressure (P)", 385, 45); ctx.fillText("Volume (V)", 680, 322);
+  ctx.fillText(strokeNames[strokeIdx], 430, 50);
+
+  // Ideal Otto loop
+  const vTDC = 460, vBDC = 690, p1 = 275, p2 = 275 - simState.cr * 11, p3 = p2 - 85, p4 = p1 - 35;
+  ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(vBDC, p1);
+  ctx.quadraticCurveTo(550, p1 - 15, vTDC, p2); // 1->2 compression
+  ctx.lineTo(vTDC, p3); // 2->3 heat addition
+  ctx.quadraticCurveTo(550, p3 + 45, vBDC, p4); // 3->4 expansion
+  ctx.lineTo(vBDC, p1); // 4->1 heat rejection
+  ctx.stroke();
+
+  const eff = (1 - 1 / Math.pow(simState.cr, 0.4)) * 100;
+  document.getElementById("simNarration").textContent =
+   `${strokeNames[strokeIdx]} | Crank: ${Math.round(cycleAngle)}° | r = ${simState.cr} | Ideal Otto Efficiency η = ${eff.toFixed(1)}%`;
+
+ } else if (simState.type === "slider") {
+  const theta = (simState.angle * Math.PI) / 180;
+  const r = simState.crankR, l = simState.rodL;
+  const cx = 220, cy = 180;
+  const px = cx + r * Math.cos(theta);
+  const py = cy - r * Math.sin(theta);
+  const sinPhi = (r * Math.sin(theta)) / l;
+  const cosPhi = Math.sqrt(1 - sinPhi * sinPhi);
+  const sx = px + l * cosPhi;
+
+  ctx.strokeStyle = "#475569"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(120, cy); ctx.lineTo(680, cy); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+
+  // Crank & Rod
+  ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+  ctx.strokeStyle = "#38bdf8";
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, cy); ctx.stroke();
+
+  // Slider block
+  ctx.fillStyle = "#22c55e";
+  ctx.fillRect(sx - 24, cy - 18, 48, 36);
+
+  const disp = (r * (1 - Math.cos(theta)) + l * (1 - cosPhi)).toFixed(1);
+  const n = l / r;
+  const velFactor = (Math.sin(theta) + Math.sin(2 * theta) / (2 * n)).toFixed(2);
+  const accFactor = (Math.cos(theta) + Math.cos(2 * theta) / n).toFixed(2);
+  document.getElementById("simNarration").textContent =
+   `θ = ${Math.round(simState.angle % 360)}° | Displacement x = ${disp} mm | v/(ωr) = ${velFactor} | a/(ω²r) = ${accFactor}`;
+
+ } else {
+  // Simply Supported Beam SFD & BMD
+  const L = 6, P = simState.loadP, a = simState.loadPos * L, b = L - a;
+  const Ra = (P * b) / L, Rb = (P * a) / L, Mmax = Ra * a;
+  const x0 = 120, w = 560, loadX = x0 + simState.loadPos * w;
+
+  // Beam
+  ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(x0, 75); ctx.lineTo(x0 + w, 75); ctx.stroke();
+  // Load arrow
+  ctx.strokeStyle = "#ef4444"; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(loadX, 20); ctx.lineTo(loadX, 70); ctx.stroke();
+  ctx.fillStyle = "#f8fafc"; ctx.font = "13px Arial";
+  ctx.fillText(`P = ${P} kN`, loadX - 25, 16);
+  ctx.fillText(`Ra = ${Ra.toFixed(2)} kN`, x0 - 20, 102);
+  ctx.fillText(`Rb = ${Rb.toFixed(2)} kN`, x0 + w - 45, 102);
+
+  // SFD
+  const sfdY = 175;
+  ctx.strokeStyle = "#64748b"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, sfdY); ctx.lineTo(x0 + w, sfdY); ctx.stroke();
+  ctx.fillStyle = "rgba(56,189,248,0.3)"; ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, sfdY); ctx.lineTo(x0, sfdY - Ra * 1.1); ctx.lineTo(loadX, sfdY - Ra * 1.1);
+  ctx.lineTo(loadX, sfdY + Rb * 1.1); ctx.lineTo(x0 + w, sfdY + Rb * 1.1); ctx.lineTo(x0 + w, sfdY);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#38bdf8"; ctx.fillText("SFD", 65, sfdY);
+
+  // BMD
+  const bmdY = 270;
+  ctx.strokeStyle = "#64748b"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, bmdY); ctx.lineTo(x0 + w, bmdY); ctx.stroke();
+  ctx.fillStyle = "rgba(34,197,94,0.3)"; ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, bmdY); ctx.lineTo(loadX, bmdY + Mmax * 1.1); ctx.lineTo(x0 + w, bmdY);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#22c55e"; ctx.fillText(`BMD (Mmax = ${Mmax.toFixed(2)} kN·m)`, 65, bmdY);
+
+  document.getElementById("simNarration").textContent =
+   `Span L = 6 m | Ra = ${Ra.toFixed(2)} kN | Rb = ${Rb.toFixed(2)} kN | Max Bending Moment = ${Mmax.toFixed(2)} kN·m at x = ${a.toFixed(2)} m`;
+ }
+}
+
+setInterval(() => {
+ if (simState.playing) {
+  const spd = parseFloat(document.getElementById("simSpeed").value || "1");
+  simState.angle = (simState.angle + 3 * spd) % 720;
+  drawSim();
+ }
+}, 30);
+
+// ==================== 5. PRACTICE & MISTAKE TRACKER ====================
+const questions = [
+ {
+  level: "Level 1 – Fundamentals",
+  topic: "Strength of Materials",
+  q: "A steel rod of cross-sectional area 20 mm² carries an axial tensile load of 100 N. What is the normal stress?",
+  o: ["2 MPa", "5 MPa", "20 MPa", "50 MPa"],
+  a: 1,
+  e: "σ = F / A = 100 N / (20 × 10⁻⁶ m²) = 5 × 10⁶ Pa = 5 MPa. Trap: Always convert mm² to m² (1 N/mm² = 1 MPa)."
+ },
+ {
+  level: "Level 2 – Standard GATE",
+  topic: "Thermodynamics",
+  q: "During a reversible adiabatic (isentropic) compression of an ideal gas in a closed system, which statement is ALWAYS true?",
+  o: ["Temperature remains constant", "Entropy increases", "Work done on the gas equals increase in internal energy", "Heat transfer equals work transfer"],
+  a: 2,
+  e: "First Law: δQ = dU + δW. Since adiabatic (δQ = 0), dU = -δW. Compression work is negative, so ΔU = +W_in."
+ },
+ {
+  level: "Level 2 – Standard GATE",
+  topic: "Fluid Mechanics",
+  q: "Water flows steadily through a horizontal tapering pipe whose diameter halves from inlet to outlet. The ratio of outlet velocity to inlet velocity (V₂ / V₁) is:",
+  o: ["2", "4", "8", "0.25"],
+  a: 1,
+  e: "Continuity: A₁V₁ = A₂V₂ ⇒ V₂/V₁ = (D₁/D₂)² = (2)² = 4. Trap: Area scales with D², not D."
+ },
+ {
+  level: "Level 3 – Advanced GATE",
+  topic: "Theory of Machines",
+  q: "For a planar 4-bar linkage with link lengths l₁ = 40 mm, l₂ = 90 mm, l₃ = 100 mm, l₄ = 110 mm, if the shortest link (40 mm) is fixed, the mechanism acts as a:",
+  o: ["Crank-rocker", "Double-crank (Drag-link)", "Double-rocker", "Change-point mechanism"],
+  a: 1,
+  e: "Grashof condition: s + l = 40 + 110 = 150 mm < p + q = 90 + 100 = 190 mm. Fixing the shortest link produces a Double-Crank."
+ },
+ {
+  level: "Level 2 – Standard GATE",
+  topic: "Heat Transfer",
+  q: "Under steady-state 1D heat conduction without internal heat generation through a plane wall of constant thermal conductivity, the temperature profile is:",
+  o: ["Parabolic", "Exponential", "Linear", "Logarithmic"],
+  a: 2,
+  e: "d²T/dx² = 0 ⇒ T(x) = C₁x + C₂ (Linear). Parabolic occurs only with uniform internal heat generation."
+ }
 ];
 
-let qIndex=0,score=0,answered=false;
+const mistakeCategories = ["Conceptual", "Formula", "Calculation", "Unit Conversion", "Question-Reading", "Time-Management"];
+let mistakeLog = JSON.parse(localStorage.getItem("gg_mistakes_v2") || "[]");
+let revisionQueue = JSON.parse(localStorage.getItem("gg_revisions_v2") || "[]");
+let qIndex = 0, score = 0, answered = false;
 
-function renderQuestion(){
- const q=questions[qIndex];
- answered=false;
- document.getElementById("qNumber").textContent="Question "+(qIndex+1)+" of "+questions.length;
- document.getElementById("question").textContent=q.q;
- document.getElementById("feedback").textContent="";
- document.getElementById("next").disabled=true;
- document.getElementById("options").innerHTML="";
- q.o.forEach((option,i)=>{
-  const btn=document.createElement("button");
-  btn.className="option";
-  btn.textContent=String.fromCharCode(65+i)+". "+option;
-  btn.onclick=()=>selectAnswer(i,btn);
-  document.getElementById("options").appendChild(btn);
+function renderQuestion() {
+ const q = questions[qIndex];
+ answered = false;
+ document.getElementById("qLevel").textContent = q.level;
+ document.getElementById("qTopicTag").textContent = q.topic;
+ document.getElementById("qNumber").textContent = `Question ${qIndex + 1} of ${questions.length}`;
+ document.getElementById("question").textContent = q.q;
+ document.getElementById("feedback").textContent = "";
+ document.getElementById("mistakeTagBox").style.display = "none";
+ document.getElementById("next").disabled = true;
+ const optBox = document.getElementById("options");
+ optBox.innerHTML = "";
+ q.o.forEach((opt, i) => {
+  const btn = document.createElement("button");
+  btn.className = "option";
+  btn.textContent = `${String.fromCharCode(65 + i)}. ${opt}`;
+  btn.onclick = () => selectAnswer(i, btn);
+  optBox.appendChild(btn);
  });
- document.getElementById("score").textContent="Score: "+score;
 }
 
-function selectAnswer(i,btn){
- if(answered)return;
- answered=true;
- const q=questions[qIndex];
- if(i===q.a){
+function selectAnswer(i, btn) {
+ if (answered) return;
+ answered = true;
+ const q = questions[qIndex];
+ if (i === q.a) {
   score++;
   btn.classList.add("correct");
-  document.getElementById("feedback").textContent="Correct! "+q.e;
- }else{
+  document.getElementById("feedback").innerHTML = `<span style="color:#15803d;font-weight:700">✅ Correct!</span> ${q.e}`;
+ } else {
   btn.classList.add("wrong");
   document.querySelectorAll(".option")[q.a].classList.add("correct");
-  document.getElementById("feedback").textContent="Incorrect. "+q.e;
+  document.getElementById("feedback").innerHTML = `<span style="color:#b91c1c;font-weight:700">❌ Incorrect.</span> ${q.e}`;
+  const tagBox = document.getElementById("mistakeTagBox");
+  tagBox.style.display = "block";
+  document.getElementById("mistakeButtons").innerHTML = mistakeCategories.map(cat =>
+   `<button class="cmd-chip" onclick="logMistake('${q.topic}','${cat}','${q.q.replace(/'/g, "")}')">${cat}</button>`
+  ).join("");
  }
- document.getElementById("score").textContent="Score: "+score;
- document.getElementById("next").disabled=false;
+ document.getElementById("score").textContent = `Score: ${score}/${questions.length}`;
+ document.getElementById("next").disabled = false;
 }
 
-function nextQuestion(){
- if(!answered)return;
- if(qIndex===questions.length-1){
-  document.getElementById("feedback").textContent="Quiz completed! Your score: "+score+"/"+questions.length+". Restart the quiz to try again.";
-  document.getElementById("next").disabled=true;
-  return;
- }
- qIndex++;
+function logMistake(topic, type, questionText) {
+ mistakeLog.unshift({ topic, type, questionText, date: new Date().toLocaleDateString() });
+ localStorage.setItem("gg_mistakes_v2", JSON.stringify(mistakeLog.slice(0, 50)));
+ document.getElementById("mistakeTagBox").innerHTML = `<span style="color:#15803d;font-size:12px;font-weight:700">✔ Logged under "${type}" for ${topic}.</span>`;
+ renderRevisionAndMistakes();
+}
+
+function nextQuestion() {
+ if (!answered) return;
+ qIndex = (qIndex + 1) % questions.length;
  renderQuestion();
 }
 
-const formulas=[
-["Normal Stress","σ = F/A","Force divided by cross-sectional area."],
-["Normal Strain","ε = ΔL/L","Change in length divided by original length."],
-["Hooke's Law","σ = Eε","For linear elastic material."],
-["Bending Equation","M/I = σ/y = E/R","For elastic beam bending."],
-["Torsion Equation","T/J = τ/r = Gθ/L","For circular shafts in elastic torsion."],
-["Continuity Equation","A₁V₁ = A₂V₂","Steady incompressible flow."],
-["Bernoulli Equation","P/ρg + V²/2g + z = constant","Ideal steady incompressible flow along a streamline."],
-["Heat Conduction","Q̇ = −kA(dT/dx)","Fourier's law of heat conduction."],
-["Ideal Gas","PV = mRT","Ideal gas equation of state."],
-["Thermal Efficiency","η = Wnet/Qin","Heat engine thermal efficiency."]
-];
-
-function renderFormulas(filter=""){
- const box=document.getElementById("formulaList");
- box.innerHTML="";
- formulas.filter(f=>f.join(" ").toLowerCase().includes(filter.toLowerCase())).forEach(f=>{
-  const div=document.createElement("div");
-  div.className="formula";
-  div.innerHTML="<b>"+f[0]+"</b><div class='equation'></div><small class='muted'></small>";
-  div.querySelector(".equation").textContent=f[1];
-  div.querySelector("small").textContent=f[2];
-  box.appendChild(div);
- });
+// ==================== 6. SPACED REVISION & FORMULAS ====================
+function scheduleRevision(topicKey, masteryLvl) {
+ if (masteryLvl === 0) return;
+ const intervals = [0, 1, 3, 7, 14, 30];
+ const days = intervals[Math.min(masteryLvl, 5)];
+ const due = new Date(Date.now() + days * 86400000).toLocaleDateString();
+ revisionQueue = revisionQueue.filter(r => r.topicKey !== topicKey);
+ revisionQueue.unshift({ topicKey: topicKey.replace("|", " → "), due, stage: masteryLevels[masteryLvl] });
+ localStorage.setItem("gg_revisions_v2", JSON.stringify(revisionQueue));
+ renderRevisionAndMistakes();
 }
 
-document.getElementById("search").addEventListener("input",e=>renderFormulas(e.target.value));
+function renderRevisionAndMistakes() {
+ const rList = document.getElementById("revisionQueueList");
+ rList.innerHTML = revisionQueue.length
+  ? revisionQueue.map(r => `<div class="task" style="justify-content:space-between"><span><b>${r.topicKey}</b> (${r.stage})</span><span class="badge">Due: ${r.due}</span></div>`).join("")
+  : `<p class="muted">Mark any topic in the Syllabus tab to automatically generate your 1d → 3d → 7d → 14d → 30d spaced revision schedule.</p>`;
 
-const weeks=[
-["Week 1–2","Thermodynamics and Mathematics","Properties, laws, entropy, cycles and mathematics revision."],
-["Week 3","Engineering Mechanics and SOM","Equilibrium, friction, stress, SFD, BMD and bending."],
-["Week 4","SOM, TOM and Machine Design","Torsion, deflection, mechanisms, gears and vibrations."],
-["Week 5","Fluid Mechanics","Fluid statics, continuity, Bernoulli and pipe flow."],
-["Week 6","Heat Transfer","Conduction, convection, radiation and heat exchangers."],
-["Week 7","Manufacturing","Casting, forming, joining, machining and metrology."],
-["Week 8","Materials and Industrial Engineering","Materials, inventory, quality and operations research."],
-["Week 9–10","Syllabus Completion and PYQs","Cover remaining official syllabus and solve previous-year questions."],
-["Week 11–12","Mock Tests and Revision","Timed tests, error analysis and formula revision."]
+ const mList = document.getElementById("mistakeLogList");
+ mList.innerHTML = mistakeLog.length
+  ? mistakeLog.map(m => `<div class="formula"><span class="badge">${m.type}</span><b>${m.topic}</b> <span class="muted">(${m.date})</span><div class="muted" style="margin-top:4px">${m.questionText}</div></div>`).join("")
+  : `<p class="muted">No mistakes logged yet. Attempt questions in Practice & PYQs to track error patterns.</p>`;
+}
+
+const formulas = [
+ ["Normal Stress", "σ = F / A", "Valid for uniform axial loading away from stress concentrations."],
+ ["Bending Equation", "M / I = σ / y = E / R", "Assumes pure bending, linear elastic homogeneous isotropic material, plane sections remain plane."],
+ ["Torsion Equation", "T / J = τ / r = Gθ / L", "Valid ONLY for circular solid or hollow shafts in linear elastic range."],
+ ["Euler Buckling Load", "P_cr = π² E I_min / L_e²", "Valid only for long slender columns (slenderness ratio > critical value)."],
+ ["Continuity Equation", "A₁V₁ = A₂V₂", "Steady, 1D, incompressible flow without branches."],
+ ["Bernoulli Equation", "P/ρg + V²/2g + z = constant", "Steady, inviscid, incompressible flow along a streamline."],
+ ["Fourier's Conduction Law", "Q̇ = −k A (dT/dx)", "1D steady conduction; negative sign indicates heat flows toward decreasing temperature."],
+ ["Ideal Otto Efficiency", "η = 1 − 1 / r^(γ−1)", "Air-standard cycle with constant specific heats (γ = 1.4 for air)."],
+ ["Grashof's Law", "s + l ≤ p + q", "Condition for at least one link to make a complete 360° revolution in a 4-bar mechanism."],
+ ["EOQ (Inventory)", "Q* = √(2 D C_o / C_h)", "Deterministic demand, zero lead time, no shortages allowed."]
 ];
 
-document.getElementById("weekList").innerHTML=weeks.map(w=>"<div class='card'><b>"+w[0]+" · "+w[1]+"</b><p class='muted'>"+w[2]+"</p></div>").join("");
+function renderFormulas(filter = "") {
+ const box = document.getElementById("formulaList");
+ box.innerHTML = formulas
+  .filter(f => f.join(" ").toLowerCase().includes(filter.toLowerCase()))
+  .map(f => `<div class="formula"><b>${f[0]}</b><div class="equation">${f[1]}</div><small class="muted">Assumption: ${f[2]}</small></div>`)
+  .join("");
+}
+document.getElementById("search").addEventListener("input", e => renderFormulas(e.target.value));
 
-document.getElementById("today").textContent=new Date().toDateString();
+// ==================== 7. NAVIGATION & SETTINGS ====================
+function showPage(id, button) {
+ document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if (button) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  button.classList.add("active");
+ }
+ window.scrollTo(0, 0);
+}
+
+function saveSettings() {
+ localStorage.setItem("gg_backend_url", document.getElementById("backendUrlInput").value.trim());
+ localStorage.setItem("gg_gemini_key", document.getElementById("geminiKeyInput").value.trim());
+ document.getElementById("settingsSavedMsg").textContent = "Saved! Your AI settings are stored locally in this browser.";
+}
+
+// Init
+document.getElementById("today").textContent = new Date().toDateString();
+document.getElementById("currentLessonBadge").textContent = `Topic: ${activeTopic}`;
+document.getElementById("backendUrlInput").value = localStorage.getItem("gg_backend_url") || "https://gateguru-1p9k.onrender.com/chat";
+document.getElementById("geminiKeyInput").value = localStorage.getItem("gg_gemini_key") || "";
+renderChat();
 renderSyllabus();
 renderQuestion();
 renderFormulas();
+renderRevisionAndMistakes();
+renderSimSliders();
+drawSim();
 </script>
 </body>
 </html>
