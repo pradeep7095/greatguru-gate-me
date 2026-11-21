@@ -62,11 +62,13 @@ select.mastery-select{padding:5px 8px;border-radius:7px;border:1px solid #cbd5e1
 .badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;margin-right:6px}
 
 /* Visualizer */
-canvas{width:100%;max-width:100%;background:#0f172a;border-radius:12px;display:block;margin:10px 0}
+.sim-wrapper{position:relative;background:#0f172a;border-radius:12px;overflow:hidden;margin:10px 0}
+.sim-wrapper:fullscreen{display:flex;flex-direction:column;justify-content:center;padding:16px}
+canvas{width:100%;max-width:100%;background:#0f172a;border-radius:12px;display:block}
 .sim-controls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}
-.slider-group{margin:8px 0;font-size:13px}
-.slider-group input{width:100%}
-.subtitle-box{background:#1e293b;color:#f8fafc;padding:10px 14px;border-radius:9px;font-size:13px;margin-top:8px;border-left:4px solid #38bdf8}
+.slider-group{margin:8px 0;font-size:13px;background:#f8fafc;padding:10px 12px;border-radius:9px;border:1px solid #e2e8f0}
+.slider-group input{width:100%;margin-top:4px}
+.subtitle-box{background:#1e293b;color:#f8fafc;padding:11px 14px;border-radius:9px;font-size:13px;margin-top:8px;border-left:4px solid #38bdf8;line-height:1.45}
 
 /* Formulas & Inputs */
 .formula{padding:12px 0;border-bottom:1px solid #e9edf3}
@@ -137,7 +139,7 @@ footer{text-align:center;color:#64748b;padding:24px;font-size:12px}
   <button class="start" id="sendBtn" onclick="handleSend()">Send</button>
  </div>
  <div style="display:flex;justify-content:space-between;margin-top:8px">
-  <span class="muted" id="aiConnectionStatus">Backend: Render (gateguru-1p9k.onrender.com)</span>
+  <span class="muted" id="aiConnectionStatus">Backend: Render (greatguru-gate-me-api.onrender.com)</span>
   <button class="secondary" style="padding:4px 9px;font-size:11px" onclick="clearChat()">Reset Lesson Chat</button>
  </div>
 </section>
@@ -173,29 +175,35 @@ footer{text-align:center;color:#64748b;padding:24px;font-size:12px}
 
 <!-- 4. ENGINEERING VISUALIZATION & ANIMATION LAB -->
 <section id="visualizer" class="page">
- <h2>Interactive Engineering Simulations</h2>
- <p class="muted">Adjust parameters in real time with Play, Pause, Step-by-Step, and Speed controls.</p>
+ <h2>Interactive Engineering Visualization Lab</h2>
+ <p class="muted">Select any core mechanical subject simulation. Use Play, Pause, Step-by-Step, Zoom, Full-Screen, and live sliders.</p>
 
  <div class="card">
-  <label><b>Select Simulation:</b></label>
+  <label><b>Select Engineering Visualization:</b></label>
   <select id="simSelect" class="mastery-select" style="width:100%;padding:10px;margin:8px 0;font-size:14px" onchange="switchSim()">
-   <option value="otto">1. 4-Stroke Otto Cycle Engine + Live P-V Diagram</option>
-   <option value="slider">2. Slider-Crank Mechanism (Position, Velocity & Acceleration)</option>
-   <option value="beam">3. Simply Supported Beam (Live SFD & BMD)</option>
+   <option value="otto">1. Thermodynamics: 4-Stroke Otto Cycle Engine + Live P-V Diagram</option>
+   <option value="slider">2. Theory of Machines: Slider-Crank Mechanism (Position, Velocity & Acceleration)</option>
+   <option value="beam">3. Strength of Materials: Simply Supported Beam (Live SFD & BMD)</option>
+   <option value="fluid">4. Fluid Mechanics: Venturi Pipe Flow & Bernoulli Pressure/Velocity Profile</option>
+   <option value="heat">5. Heat Transfer: Composite Wall Conduction & Temperature Gradient</option>
   </select>
 
-  <canvas id="simCanvas" width="800" height="360"></canvas>
+  <div class="sim-wrapper" id="simWrapper">
+   <canvas id="simCanvas" width="820" height="380"></canvas>
+  </div>
 
   <div class="sim-controls">
    <button class="start" onclick="simState.playing=true">▶ Play</button>
    <button class="secondary" onclick="simState.playing=false">⏸ Pause</button>
    <button class="secondary" onclick="stepSim()">⏭ Step (+15°)</button>
    <button class="secondary" onclick="resetSim()">↺ Restart</button>
-   <label class="muted">Speed: <input type="range" id="simSpeed" min="0.2" max="2.5" step="0.1" value="1" style="width:90px"></label>
+   <button class="secondary" onclick="toggleZoom()">🔍 Zoom: <span id="zoomLabel">1.0x</span></button>
+   <button class="secondary" onclick="toggleFullscreen()">⛶ Full Screen</button>
+   <label class="muted">Speed: <input type="range" id="simSpeed" min="0.2" max="2.5" step="0.1" value="1" style="width:85px"></label>
   </div>
 
   <div id="simSliders"></div>
-  <div class="subtitle-box" id="simNarration">Narration: Ready. Press Play or Step to inspect the cycle.</div>
+  <div class="subtitle-box" id="simNarration">Narration: Ready. Press Play or Step to inspect the mechanism.</div>
  </div>
 </section>
 
@@ -250,10 +258,10 @@ footer{text-align:center;color:#64748b;padding:24px;font-size:12px}
 <!-- 8. SETTINGS -->
 <section id="settings" class="page">
  <h2>AI Backend Configuration</h2>
- <p class="muted">GreatGuru connects to your Render server by default. If your Render free tier is sleeping or you want direct browser calls, enter your free Google Gemini API key below.</p>
+ <p class="muted">GreatGuru connects to your new Render server by default. If your Render free tier is waking up or you want direct browser calls, enter your free Google Gemini API key below.</p>
  <div class="card">
   <label><b>Render FastAPI Endpoint:</b></label>
-  <input type="text" id="backendUrlInput" value="https://gateguru-1p9k.onrender.com/chat">
+  <input type="text" id="backendUrlInput" value="https://greatguru-gate-me-api.onrender.com/chat">
   <label><b>Optional Direct Gemini API Key (Fallback):</b></label>
   <input type="password" id="geminiKeyInput" placeholder="AIzaSy... (Stored only in your browser localStorage)">
   <button class="start" onclick="saveSettings()">Save Configuration</button>
@@ -405,6 +413,7 @@ function startTopicLesson(subject, topic) {
 
 // ==================== 3. AI CLASSROOM ENGINE ====================
 let chatHistory = JSON.parse(localStorage.getItem("gg_chat_v2") || "[]");
+const DEFAULT_BACKEND_URL = "https://greatguru-gate-me-api.onrender.com/chat";
 
 function renderChat() {
  const box = document.getElementById("chatBox");
@@ -454,12 +463,11 @@ async function sendClassroomMessage(text) {
 
  const contextualPrompt = `${GREATGURU_SYSTEM_PROMPT}\n\nCURRENT ACTIVE TOPIC: ${activeTopic}\n${mistakeSummary}\n\nRECENT CONVERSATION:\n${chatHistory.slice(-8).map(m => `${m.role.toUpperCase()}: ${m.text}`).join("\n")}`;
 
- const backendUrl = localStorage.getItem("gg_backend_url") || "https://gateguru-1p9k.onrender.com/chat";
+ const backendUrl = localStorage.getItem("gg_backend_url") || DEFAULT_BACKEND_URL;
  const directKey = localStorage.getItem("gg_gemini_key") || "";
 
  let reply = "";
  try {
-  // 1. Try Render FastAPI Backend
   const res = await fetch(backendUrl, {
    method: "POST",
    headers: { "Content-Type": "application/json" },
@@ -469,12 +477,11 @@ async function sendClassroomMessage(text) {
     topic: activeTopic
    })
   });
-  if (!res.ok) throw new Error("Render backend sleeping or unreachable");
+  if (!res.ok) throw new Error("Render backend waking up or unreachable");
   const data = await res.json();
   reply = data.reply || data.response || data.answer || JSON.stringify(data);
-  document.getElementById("aiConnectionStatus").textContent = "Connected: Render Backend ✅";
+  document.getElementById("aiConnectionStatus").textContent = "Connected: Render Backend (greatguru-gate-me-api.onrender.com) ✅";
  } catch (err) {
-  // 2. Fallback to Direct Gemini API if user provided free API key
   if (directKey) {
    try {
     const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(directKey)}`, {
@@ -492,7 +499,7 @@ async function sendClassroomMessage(text) {
     reply = "Could not reach Render backend or Direct Gemini API. Check your internet or tap '⚙️ AI Setup' at the top right.";
    }
   } else {
-   reply = "⚠️ Your Render backend (gateguru-1p9k.onrender.com) is currently waking up or offline.\n\nTip: Wait 30 seconds and retry, OR tap '⚙️ AI Setup' at the top right to paste your free Gemini API key for instant zero-wait responses.";
+   reply = "⚠️ Your Render backend (greatguru-gate-me-api.onrender.com) is currently waking up or offline.\n\nTip: Wait 30 seconds and retry, OR tap '⚙️ AI Setup' at the top right to paste your free Gemini API key for instant responses.";
   }
  }
 
@@ -509,16 +516,22 @@ function clearChat() {
  renderChat();
 }
 
-// ==================== 4. INTERACTIVE SIMULATION ENGINE ====================
+// ==================== 4. INTERACTIVE VISUALIZATION & ANIMATION ENGINE ====================
 const simState = {
  type: "otto",
  playing: false,
  angle: 0,
+ zoom: 1,
  cr: 8,
  crankR: 45,
  rodL: 140,
  loadP: 10,
- loadPos: 0.5
+ loadPos: 0.5,
+ throatRatio: 0.5,
+ inletVel: 2.0,
+ wallT1: 400,
+ wallT2: 50,
+ wallK: 45
 };
 
 function switchSim() {
@@ -528,21 +541,46 @@ function switchSim() {
  drawSim();
 }
 
+function toggleZoom() {
+ simState.zoom = simState.zoom === 1 ? 1.25 : simState.zoom === 1.25 ? 0.85 : 1;
+ document.getElementById("zoomLabel").textContent = `${simState.zoom}x`;
+ drawSim();
+}
+
+function toggleFullscreen() {
+ const wrapper = document.getElementById("simWrapper");
+ if (!document.fullscreenElement) {
+  wrapper.requestFullscreen().catch(() => {});
+ } else {
+  document.exitFullscreen().catch(() => {});
+ }
+}
+
 function renderSimSliders() {
  const box = document.getElementById("simSliders");
  if (simState.type === "otto") {
-  box.innerHTML = `<div class="slider-group">Compression Ratio (r): <b id="crVal">${simState.cr}</b>
+  box.innerHTML = `<div class="slider-group">Compression Ratio (r = V₁/V₂): <b id="crVal">${simState.cr}</b>
    <input type="range" min="6" max="12" step="0.5" value="${simState.cr}" oninput="simState.cr=+this.value;document.getElementById('crVal').textContent=this.value;drawSim()"></div>`;
  } else if (simState.type === "slider") {
   box.innerHTML = `<div class="slider-group">Crank Radius r (mm): <b id="rVal">${simState.crankR}</b>
    <input type="range" min="25" max="65" value="${simState.crankR}" oninput="simState.crankR=+this.value;document.getElementById('rVal').textContent=this.value;drawSim()"></div>
    <div class="slider-group">Connecting Rod L (mm): <b id="lVal">${simState.rodL}</b>
    <input type="range" min="100" max="200" value="${simState.rodL}" oninput="simState.rodL=+this.value;document.getElementById('lVal').textContent=this.value;drawSim()"></div>`;
- } else {
+ } else if (simState.type === "beam") {
   box.innerHTML = `<div class="slider-group">Point Load P (kN): <b id="pVal">${simState.loadP}</b>
    <input type="range" min="2" max="50" value="${simState.loadP}" oninput="simState.loadP=+this.value;document.getElementById('pVal').textContent=this.value;drawSim()"></div>
-   <div class="slider-group">Load Position (a / L): <b id="posVal">${simState.loadPos}</b>
+   <div class="slider-group">Load Position Ratio (a / L): <b id="posVal">${simState.loadPos}</b>
    <input type="range" min="0.1" max="0.9" step="0.05" value="${simState.loadPos}" oninput="simState.loadPos=+this.value;document.getElementById('posVal').textContent=this.value;drawSim()"></div>`;
+ } else if (simState.type === "fluid") {
+  box.innerHTML = `<div class="slider-group">Throat Diameter Ratio (D₂ / D₁): <b id="trVal">${simState.throatRatio}</b>
+   <input type="range" min="0.35" max="0.85" step="0.05" value="${simState.throatRatio}" oninput="simState.throatRatio=+this.value;document.getElementById('trVal').textContent=this.value;drawSim()"></div>
+   <div class="slider-group">Inlet Velocity V₁ (m/s): <b id="v1Val">${simState.inletVel}</b>
+   <input type="range" min="1" max="6" step="0.5" value="${simState.inletVel}" oninput="simState.inletVel=+this.value;document.getElementById('v1Val').textContent=this.value;drawSim()"></div>`;
+ } else {
+  box.innerHTML = `<div class="slider-group">Hot Surface Temp T₁ (°C): <b id="t1Val">${simState.wallT1}</b>
+   <input type="range" min="150" max="800" step="25" value="${simState.wallT1}" oninput="simState.wallT1=+this.value;document.getElementById('t1Val').textContent=this.value;drawSim()"></div>
+   <div class="slider-group">Thermal Conductivity k (W/m·K): <b id="kVal">${simState.wallK}</b>
+   <input type="range" min="10" max="200" step="5" value="${simState.wallK}" oninput="simState.wallK=+this.value;document.getElementById('kVal').textContent=this.value;drawSim()"></div>`;
  }
 }
 
@@ -561,61 +599,70 @@ function resetSim() {
 function drawSim() {
  const canvas = document.getElementById("simCanvas");
  const ctx = canvas.getContext("2d");
+ ctx.save();
  ctx.clearRect(0, 0, canvas.width, canvas.height);
+ ctx.translate(canvas.width / 2, canvas.height / 2);
+ ctx.scale(simState.zoom, simState.zoom);
+ ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
  if (simState.type === "otto") {
-  // 4-Stroke Engine (0-720 deg) + P-V Diagram
   const cycleAngle = simState.angle % 720;
   const strokeIdx = Math.floor(cycleAngle / 180);
-  const strokeNames = ["1. INTAKE (0°–180°)", "2. COMPRESSION (180°–360°)", "3. POWER EXPANSION (360°–540°)", "4. EXHAUST (540°–720°)"];
+  const strokeNames = [
+   "1. INTAKE (0°–180°): Intake valve OPEN, piston moves TDC → BDC",
+   "2. COMPRESSION (180°–360°): Both valves CLOSED, P & T rise",
+   "3. POWER EXPANSION (360°–540°): Spark ignition at TDC, gas expands",
+   "4. EXHAUST (540°–720°): Exhaust valve OPEN, burnt gas expelled"
+  ];
   const rad = (cycleAngle * Math.PI) / 180;
-  const pistonOffset = (1 - Math.cos(rad)) * 55; // 0 at TDC, 110 at BDC
+  const pistonOffset = (1 - Math.cos(rad)) * 55;
 
-  // Cylinder
-  ctx.strokeStyle = "#94a3b8";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(110, 60, 120, 210);
-
-  // Gas color
+  // Cylinder & Gas
+  ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 4;
+  ctx.strokeRect(110, 65, 120, 210);
   const gasColors = ["rgba(56,189,248,0.28)", "rgba(251,191,36,0.38)", "rgba(239,68,68,0.48)", "rgba(148,163,184,0.32)"];
   ctx.fillStyle = gasColors[strokeIdx];
-  ctx.fillRect(112, 62, 116, 40 + pistonOffset);
+  ctx.fillRect(112, 67, 116, 40 + pistonOffset);
 
   // Valves
   ctx.fillStyle = strokeIdx === 0 ? "#22c55e" : "#ef4444";
-  ctx.fillRect(130, strokeIdx === 0 ? 56 : 48, 28, 8); // Intake
+  ctx.fillRect(130, strokeIdx === 0 ? 61 : 52, 28, 8);
   ctx.fillStyle = strokeIdx === 3 ? "#22c55e" : "#ef4444";
-  ctx.fillRect(182, strokeIdx === 3 ? 56 : 48, 28, 8); // Exhaust
+  ctx.fillRect(182, strokeIdx === 3 ? 61 : 52, 28, 8);
 
   // Piston & Crank
-  const pistonY = 102 + pistonOffset;
-  ctx.fillStyle = "#cbd5e1";
-  ctx.fillRect(114, pistonY, 112, 34);
-  const crankX = 170, crankY = 295, r = 38;
-  const pinX = crankX + r * Math.sin(rad);
-  const pinY = crankY - r * Math.cos(rad);
-  ctx.strokeStyle = "#38bdf8";
-  ctx.lineWidth = 5;
+  const pistonY = 107 + pistonOffset;
+  ctx.fillStyle = "#cbd5e1"; ctx.fillRect(114, pistonY, 112, 34);
+  const crankX = 170, crankY = 300, r = 38;
+  const pinX = crankX + r * Math.sin(rad), pinY = crankY - r * Math.cos(rad);
+  ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 5;
   ctx.beginPath(); ctx.moveTo(170, pistonY + 17); ctx.lineTo(pinX, pinY); ctx.stroke();
   ctx.beginPath(); ctx.arc(crankX, crankY, r, 0, Math.PI * 2); ctx.strokeStyle = "#475569"; ctx.lineWidth = 2; ctx.stroke();
 
-  // P-V Diagram on right
+  // P-V Diagram
   ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(410, 60); ctx.lineTo(410, 300); ctx.lineTo(740, 300); ctx.stroke();
-  ctx.fillStyle = "#f8fafc"; ctx.font = "14px Arial";
-  ctx.fillText("Pressure (P)", 385, 45); ctx.fillText("Volume (V)", 680, 322);
-  ctx.fillText(strokeNames[strokeIdx], 430, 50);
+  ctx.beginPath(); ctx.moveTo(410, 65); ctx.lineTo(410, 310); ctx.lineTo(750, 310); ctx.stroke();
+  ctx.fillStyle = "#f8fafc"; ctx.font = "13px Arial";
+  ctx.fillText("Pressure (P)", 385, 50); ctx.fillText("Volume (V)", 685, 330);
 
-  // Ideal Otto loop
-  const vTDC = 460, vBDC = 690, p1 = 275, p2 = 275 - simState.cr * 11, p3 = p2 - 85, p4 = p1 - 35;
+  const vTDC = 460, vBDC = 700, p1 = 285, p2 = 285 - simState.cr * 11, p3 = p2 - 85, p4 = p1 - 35;
   ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(vBDC, p1);
-  ctx.quadraticCurveTo(550, p1 - 15, vTDC, p2); // 1->2 compression
-  ctx.lineTo(vTDC, p3); // 2->3 heat addition
-  ctx.quadraticCurveTo(550, p3 + 45, vBDC, p4); // 3->4 expansion
-  ctx.lineTo(vBDC, p1); // 4->1 heat rejection
+  ctx.quadraticCurveTo(550, p1 - 15, vTDC, p2);
+  ctx.lineTo(vTDC, p3);
+  ctx.quadraticCurveTo(550, p3 + 45, vBDC, p4);
+  ctx.lineTo(vBDC, p1);
   ctx.stroke();
+
+  // Live state marker dot on P-V diagram
+  let dotX = vBDC, dotY = p1;
+  const frac = (cycleAngle % 180) / 180;
+  if (strokeIdx === 0) { dotX = vTDC + frac * (vBDC - vTDC); dotY = p1 + 8; }
+  else if (strokeIdx === 1) { dotX = vBDC - frac * (vBDC - vTDC); dotY = p1 - Math.pow(frac, 1.4) * (p1 - p2); }
+  else if (strokeIdx === 2) { dotX = vTDC + frac * (vBDC - vTDC); dotY = p3 + Math.pow(frac, 0.7) * (p4 - p3); }
+  else { dotX = vBDC - frac * (vBDC - vTDC); dotY = p1 + 4; }
+  ctx.fillStyle = "#facc15"; ctx.beginPath(); ctx.arc(dotX, dotY, 7, 0, Math.PI * 2); ctx.fill();
 
   const eff = (1 - 1 / Math.pow(simState.cr, 0.4)) * 100;
   document.getElementById("simNarration").textContent =
@@ -624,44 +671,40 @@ function drawSim() {
  } else if (simState.type === "slider") {
   const theta = (simState.angle * Math.PI) / 180;
   const r = simState.crankR, l = simState.rodL;
-  const cx = 220, cy = 180;
-  const px = cx + r * Math.cos(theta);
-  const py = cy - r * Math.sin(theta);
+  const cx = 220, cy = 190;
+  const px = cx + r * Math.cos(theta), py = cy - r * Math.sin(theta);
   const sinPhi = (r * Math.sin(theta)) / l;
   const cosPhi = Math.sqrt(1 - sinPhi * sinPhi);
   const sx = px + l * cosPhi;
 
   ctx.strokeStyle = "#475569"; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(120, cy); ctx.lineTo(680, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(120, cy); ctx.lineTo(700, cy); ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
 
-  // Crank & Rod
   ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 5;
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
   ctx.strokeStyle = "#38bdf8";
   ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, cy); ctx.stroke();
 
-  // Slider block
-  ctx.fillStyle = "#22c55e";
-  ctx.fillRect(sx - 24, cy - 18, 48, 36);
+  ctx.fillStyle = "#22c55e"; ctx.fillRect(sx - 24, cy - 18, 48, 36);
+  ctx.fillStyle = "#f8fafc"; ctx.font = "13px Arial";
+  ctx.fillText(`Crank r = ${r} mm`, cx - 35, cy + r + 24);
+  ctx.fillText(`Rod L = ${l} mm`, (px + sx) / 2 - 30, py - 15);
 
   const disp = (r * (1 - Math.cos(theta)) + l * (1 - cosPhi)).toFixed(1);
   const n = l / r;
   const velFactor = (Math.sin(theta) + Math.sin(2 * theta) / (2 * n)).toFixed(2);
   const accFactor = (Math.cos(theta) + Math.cos(2 * theta) / n).toFixed(2);
   document.getElementById("simNarration").textContent =
-   `θ = ${Math.round(simState.angle % 360)}° | Displacement x = ${disp} mm | v/(ωr) = ${velFactor} | a/(ω²r) = ${accFactor}`;
+   `Crank Angle θ = ${Math.round(simState.angle % 360)}° | Piston Displacement x = ${disp} mm | Normalized Velocity v/(ωr) = ${velFactor} | Normalized Acceleration a/(ω²r) = ${accFactor}`;
 
- } else {
-  // Simply Supported Beam SFD & BMD
+ } else if (simState.type === "beam") {
   const L = 6, P = simState.loadP, a = simState.loadPos * L, b = L - a;
   const Ra = (P * b) / L, Rb = (P * a) / L, Mmax = Ra * a;
-  const x0 = 120, w = 560, loadX = x0 + simState.loadPos * w;
+  const x0 = 120, w = 580, loadX = x0 + simState.loadPos * w;
 
-  // Beam
   ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 6;
   ctx.beginPath(); ctx.moveTo(x0, 75); ctx.lineTo(x0 + w, 75); ctx.stroke();
-  // Load arrow
   ctx.strokeStyle = "#ef4444"; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(loadX, 20); ctx.lineTo(loadX, 70); ctx.stroke();
   ctx.fillStyle = "#f8fafc"; ctx.font = "13px Arial";
@@ -669,8 +712,7 @@ function drawSim() {
   ctx.fillText(`Ra = ${Ra.toFixed(2)} kN`, x0 - 20, 102);
   ctx.fillText(`Rb = ${Rb.toFixed(2)} kN`, x0 + w - 45, 102);
 
-  // SFD
-  const sfdY = 175;
+  const sfdY = 180;
   ctx.strokeStyle = "#64748b"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x0, sfdY); ctx.lineTo(x0 + w, sfdY); ctx.stroke();
   ctx.fillStyle = "rgba(56,189,248,0.3)"; ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2;
@@ -680,8 +722,7 @@ function drawSim() {
   ctx.fill(); ctx.stroke();
   ctx.fillStyle = "#38bdf8"; ctx.fillText("SFD", 65, sfdY);
 
-  // BMD
-  const bmdY = 270;
+  const bmdY = 285;
   ctx.strokeStyle = "#64748b"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x0, bmdY); ctx.lineTo(x0 + w, bmdY); ctx.stroke();
   ctx.fillStyle = "rgba(34,197,94,0.3)"; ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2;
@@ -691,8 +732,91 @@ function drawSim() {
   ctx.fillStyle = "#22c55e"; ctx.fillText(`BMD (Mmax = ${Mmax.toFixed(2)} kN·m)`, 65, bmdY);
 
   document.getElementById("simNarration").textContent =
-   `Span L = 6 m | Ra = ${Ra.toFixed(2)} kN | Rb = ${Rb.toFixed(2)} kN | Max Bending Moment = ${Mmax.toFixed(2)} kN·m at x = ${a.toFixed(2)} m`;
+   `Simply Supported Beam (L = 6 m) | Ra = ${Ra.toFixed(2)} kN, Rb = ${Rb.toFixed(2)} kN | Max Bending Moment Mmax = ${Mmax.toFixed(2)} kN·m directly under load at x = ${a.toFixed(2)} m.`;
+
+ } else if (simState.type === "fluid") {
+  // Venturi Meter + Bernoulli Pressure Drop
+  const tr = simState.throatRatio;
+  const v1 = simState.inletVel;
+  const v2 = v1 / (tr * tr);
+  const deltaP = 0.5 * 1000 * (v2 * v2 - v1 * v1) / 1000; // kPa for water
+
+  const pipeTop1 = 110, pipeBot1 = 250;
+  const throatHalf = 70 * tr;
+  const midY = 180;
+
+  ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(80, pipeTop1); ctx.lineTo(260, pipeTop1); ctx.lineTo(360, midY - throatHalf);
+  ctx.lineTo(460, midY - throatHalf); ctx.lineTo(580, pipeTop1); ctx.lineTo(740, pipeTop1);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(80, pipeBot1); ctx.lineTo(260, pipeBot1); ctx.lineTo(360, midY + throatHalf);
+  ctx.lineTo(460, midY + throatHalf); ctx.lineTo(580, pipeBot1); ctx.lineTo(740, pipeBot1);
+  ctx.stroke();
+
+  // Animated fluid particles
+  const shift = (simState.angle * 2) % 640;
+  ctx.fillStyle = "#38bdf8";
+  for (let i = 0; i < 8; i++) {
+   const px = 90 + ((shift + i * 80) % 630);
+   const speedBoost = (px > 330 && px < 490) ? 1.6 : 1;
+   ctx.beginPath(); ctx.arc(px, midY - 22, 4 * speedBoost, 0, Math.PI * 2); ctx.fill();
+   ctx.beginPath(); ctx.arc(px, midY + 22, 4 * speedBoost, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Piezometer columns showing pressure head
+  const h1 = 75, h2 = Math.max(12, 75 - deltaP * 0.45);
+  ctx.fillStyle = "rgba(56,189,248,0.6)";
+  ctx.fillRect(195, pipeTop1 - h1, 16, h1);
+  ctx.fillRect(402, midY - throatHalf - h2, 16, h2);
+  ctx.fillStyle = "#f8fafc"; ctx.font = "13px Arial";
+  ctx.fillText(`V₁ = ${v1.toFixed(1)} m/s (High P₁)`, 140, 285);
+  ctx.fillText(`V₂ = ${v2.toFixed(2)} m/s (Low P₂)`, 345, 285);
+  ctx.fillText(`ΔP = ${deltaP.toFixed(2)} kPa`, 560, 285);
+
+  document.getElementById("simNarration").textContent =
+   `Continuity & Bernoulli (Water ρ = 1000 kg/m³): D₂/D₁ = ${tr} ⇒ Area ratio = ${(tr*tr).toFixed(2)} ⇒ Velocity jumps from ${v1.toFixed(1)} m/s to ${v2.toFixed(2)} m/s, causing pressure drop ΔP = ${deltaP.toFixed(2)} kPa.`;
+
+ } else {
+  // 1D Steady Heat Conduction through Plane Wall
+  const T1 = simState.wallT1, T2 = simState.wallT2, k = simState.wallK, L = 0.2;
+  const qFlux = (k * (T1 - T2)) / L; // W/m²
+
+  // Wall gradient
+  const grad = ctx.createLinearGradient(220, 0, 580, 0);
+  grad.addColorStop(0, "#ef4444");
+  grad.addColorStop(1, "#3b82f6");
+  ctx.fillStyle = grad;
+  ctx.fillRect(220, 80, 360, 210);
+  ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 3;
+  ctx.strokeRect(220, 80, 360, 210);
+
+  // Linear Temperature Profile line
+  const y1 = 270 - (T1 / 850) * 170;
+  const y2 = 270 - (T2 / 850) * 170;
+  ctx.strokeStyle = "#facc15"; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(220, y1); ctx.lineTo(580, y2); ctx.stroke();
+
+  // Animated heat flux arrows
+  const offset = (simState.angle % 60);
+  ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
+  for (let x = 240 + offset; x < 550; x += 75) {
+   ctx.beginPath(); ctx.moveTo(x, 185); ctx.lineTo(x + 28, 185); ctx.lineTo(x + 22, 179); ctx.stroke();
+  }
+
+  ctx.fillStyle = "#f8fafc"; ctx.font = "14px Arial";
+  ctx.fillText(`T₁ = ${T1}°C`, 135, 185);
+  ctx.fillText(`T₂ = ${T2}°C`, 600, 185);
+  ctx.fillText(`Wall Thickness L = 0.2 m | k = ${k} W/(m·K)`, 255, 62);
+  ctx.fillStyle = "#facc15";
+  ctx.fillText(`Linear Profile T(x) | Heat Flux q'' = ${(qFlux / 1000).toFixed(2)} kW/m²`, 235, 320);
+
+  document.getElementById("simNarration").textContent =
+   `Fourier's Law (1D Steady, No Heat Generation): q'' = −k(dT/dx) = ${k} × (${T1} − ${T2}) / 0.2 = ${(qFlux / 1000).toFixed(2)} kW/m². Temperature drops linearly from ${T1}°C to ${T2}°C.`;
  }
+ ctx.restore();
 }
 
 setInterval(() => {
@@ -874,7 +998,7 @@ function saveSettings() {
 // Init
 document.getElementById("today").textContent = new Date().toDateString();
 document.getElementById("currentLessonBadge").textContent = `Topic: ${activeTopic}`;
-document.getElementById("backendUrlInput").value = localStorage.getItem("gg_backend_url") || "https://gateguru-1p9k.onrender.com/chat";
+document.getElementById("backendUrlInput").value = localStorage.getItem("gg_backend_url") || DEFAULT_BACKEND_URL;
 document.getElementById("geminiKeyInput").value = localStorage.getItem("gg_gemini_key") || "";
 renderChat();
 renderSyllabus();
