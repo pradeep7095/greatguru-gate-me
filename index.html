@@ -132,6 +132,13 @@ footer{text-align:center;color:#64748b;padding:24px;font-size:12px}
   <button class="cmd-chip" onclick="sendClassroomMessage('ANALYZE MY MISTAKES')">🔍 ANALYZE MISTAKES</button>
  </div>
 
+ <div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+  <button class="start" id="autoBtn" onclick="toggleAutonomous()">▶ Start Auto Class</button>
+  <button class="secondary" id="pauseBtn" onclick="pauseAutonomous()">⏸ Pause</button>
+  <button class="secondary" onclick="repeatLesson()">🔊 Repeat</button>
+  <label class="muted"><input type="checkbox" id="voiceEnabled" checked> Speak lessons</label>
+  <span class="muted" id="autoStatus" role="status" aria-live="polite">Ready</span>
+ </div>
  <div class="chat-box" id="chatBox"></div>
 
  <div class="chat-input-row">
@@ -402,6 +409,7 @@ function updateDashboardStats() {
 }
 
 function startTopicLesson(subject, topic) {
+ pauseAutonomous();
  activeTopic = `${subject} → ${topic}`;
  localStorage.setItem("gg_active_topic", activeTopic);
  document.getElementById("currentLessonBadge").textContent = `Topic: ${activeTopic}`;
@@ -443,6 +451,7 @@ function launchCommand(cmd) {
 }
 
 function handleSend() {
+ if (autoBusy) return;
  const input = document.getElementById("userInput");
  const text = input.value.trim();
  if (!text) return;
@@ -450,67 +459,153 @@ function handleSend() {
  sendClassroomMessage(text);
 }
 
-async function sendClassroomMessage(text) {
- chatHistory.push({ role: "user", text });
+// Autonomous classroom: stop/pause before questions, interruptions or errors.
+let autoRunning = false;
+let autoBusy = false;
+let autoAwaitingAnswer = false;
+let autoGeneration = 0;
+let autoSteps = 0;
+let lastLessonText = "";
+let activeController = null;
+const waitForSpeech = () => new Promise(resolve => {
+ if (!document.getElementById("voiceEnabled").checked || !("speechSynthesis" in window)) return resolve();
+ const utterance = new SpeechSynthesisUtterance(lastLessonText.slice(0, 3000));
+ utterance.lang = "en-IN";
+ utterance.rate = 0.92;
+ utterance.onend = resolve;
+ utterance.onerror = resolve;
+ speechSynthesis.cancel();
+ speechSynthesis.speak(utterance);
+});
+function setAutoStatus(message) {
+ document.getElementById("autoStatus").textContent = message;
+ document.getElementById("autoBtn").textContent = autoRunning ? "■ Stop Auto Class" : "▶ Start Auto Class";
+}
+function pauseAutonomous() {
+ autoRunning = false;
+ autoGeneration++;
+ if (activeController) activeController.abort();
+ if ("speechSynthesis" in window) speechSynthesis.cancel();
+ setAutoStatus("Paused");
+}
+function toggleAutonomous() {
+ if (autoRunning) return pauseAutonomous();
+ if (autoBusy) return;
+ autoRunning = true;
+ autoAwaitingAnswer = false;
+ autoSteps = 0;
+ setAutoStatus("Teaching...");
+ sendClassroomMessage("START CLASS", true);
+}
+function repeatLesson() {
+ if (!lastLessonText || !("speechSynthesis" in window)) return;
+ speechSynthesis.cancel();
+ const utterance = new SpeechSynthesisUtterance(lastLessonText.slice(0, 3000));
+ utterance.lang = "en-IN";
+ utterance.rate = 0.92;
+ speechSynthesis.speak(utterance);
+}
+function openLessonAnimation(type) {
+ if (!["otto", "slider", "beam", "fluid", "heat"].includes(type)) return;
+ document.getElementById("simSelect").value = type;
+ switchSim();
+ simState.playing = true;
+ // Animation is available in Visual Lab without disrupting classroom speech.
+ const link = document.createElement("button");
+ link.className = "teach-btn";
+ link.textContent = "▶ View " + document.getElementById("simSelect").selectedOptions[0].textContent.split(":")[0] + " animation";
+ link.onclick = () => showPage("visualizer");
+ const box = document.getElementById("chatBox");
+ const wrapper = document.createElement("div");
+ wrapper.className = "msg ai";
+ wrapper.appendChild(link);
+ box.appendChild(wrapper);
+ box.scrollTop = box.scrollHeight;
+}
+async function sendClassroomMessage(text, fromAuto = false) {
+ if (autoBusy) return;
+ if (!fromAuto && autoRunning) {
+  // A student interruption takes priority over automatic progression.
+  autoRunning = false;
+  autoGeneration++;
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+ }
+ const answeringCheck = !fromAuto && autoAwaitingAnswer;
+ if (answeringCheck) {
+  autoAwaitingAnswer = false;
+  autoRunning = true;
+  autoSteps = 0;
+ }
+ const generation = autoGeneration;
+ const history = chatHistory.slice(-10).filter(m => m.role === "user" || m.role === "ai");
+ chatHistory.push({role:"user", text});
  renderChat();
+ autoBusy = true;
  const sendBtn = document.getElementById("sendBtn");
  sendBtn.disabled = true;
  sendBtn.textContent = "Thinking...";
-
- const mistakeSummary = mistakeLog.length
-  ? `Logged Student Mistakes: ${mistakeLog.map(m => `${m.topic} (${m.type})`).join(", ")}`
-  : "No logged mistakes yet.";
-
- const contextualPrompt = `${GREATGURU_SYSTEM_PROMPT}\n\nCURRENT ACTIVE TOPIC: ${activeTopic}\n${mistakeSummary}\n\nRECENT CONVERSATION:\n${chatHistory.slice(-8).map(m => `${m.role.toUpperCase()}: ${m.text}`).join("\n")}`;
-
- const backendUrl = localStorage.getItem("gg_backend_url") || DEFAULT_BACKEND_URL;
- const directKey = localStorage.getItem("gg_gemini_key") || "";
-
- let reply = "";
+ activeController = new AbortController();
+ let successful = false;
  try {
+  const backendUrl = localStorage.getItem("gg_backend_url") || DEFAULT_BACKEND_URL;
   const res = await fetch(backendUrl, {
-   method: "POST",
-   headers: { "Content-Type": "application/json" },
-   body: JSON.stringify({
-    message: text,
-    system_prompt: contextualPrompt,
-    topic: activeTopic
-   })
+   method:"POST", headers:{"Content-Type":"application/json"},
+   signal:activeController.signal,
+   body:JSON.stringify({message:text,topic:activeTopic,history})
   });
-  if (!res.ok) throw new Error("Render backend waking up or unreachable");
+  if (!res.ok) throw Error("Teacher server returned " + res.status);
   const data = await res.json();
-  reply = data.reply || data.response || data.answer || JSON.stringify(data);
-  document.getElementById("aiConnectionStatus").textContent = "Connected: Render Backend (greatguru-gate-me-api.onrender.com) ✅";
- } catch (err) {
-  if (directKey) {
-   try {
-    const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(directKey)}`, {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: contextualPrompt }] },
-      contents: [{ role: "user", parts: [{ text }] }]
-     })
-    });
-    const gData = await gRes.json();
-    reply = gData.candidates?.[0]?.content?.parts?.[0]?.text || "No response received from Gemini API.";
-    document.getElementById("aiConnectionStatus").textContent = "Connected: Direct Gemini API ✅";
-   } catch (gErr) {
-    reply = "Could not reach Render backend or Direct Gemini API. Check your internet or tap '⚙️ AI Setup' at the top right.";
+  if (generation !== autoGeneration) return;
+  const reply = typeof data.reply === "string" ? data.reply : "No explanation received.";
+  lastLessonText = reply;
+  chatHistory.push({role:"ai",text:reply});
+  localStorage.setItem("gg_chat_v2",JSON.stringify(chatHistory.slice(-30)));
+  renderChat();
+  if (data.animation) openLessonAnimation(data.animation);
+  autoAwaitingAnswer = data.await_answer === true;
+  document.getElementById("aiConnectionStatus").textContent = "Connected: GreatGuru AI Backend";
+  successful = true;
+  if (autoRunning) {
+   autoSteps++;
+   if (autoSteps >= 8 && !autoAwaitingAnswer) {
+    autoRunning = false;
+    setAutoStatus("Lesson checkpoint reached — press Start Auto Class to continue");
    }
-  } else {
-   reply = "⚠️ Your Render backend (greatguru-gate-me-api.onrender.com) is currently waking up or offline.\n\nTip: Wait 30 seconds and retry, OR tap '⚙️ AI Setup' at the top right to paste your free Gemini API key for instant responses.";
   }
+  if (autoRunning) {
+   setAutoStatus(autoAwaitingAnswer ? "Waiting for your answer" : "Speaking...");
+   await waitForSpeech();
+  }
+ } catch (err) {
+  if (err.name !== "AbortError" && generation === autoGeneration) {
+   chatHistory.push({role:"ai",text:"Could not reach the AI teacher. Check your Render service and try again."});
+   renderChat();
+   pauseAutonomous();
+  }
+ } finally {
+  autoBusy = false;
+  activeController = null;
+  sendBtn.disabled = false;
+  sendBtn.textContent = "Send";
  }
-
- chatHistory.push({ role: "ai", text: reply });
- localStorage.setItem("gg_chat_v2", JSON.stringify(chatHistory.slice(-30)));
- renderChat();
- sendBtn.disabled = false;
- sendBtn.textContent = "Send";
+ if (successful && autoRunning && generation === autoGeneration) {
+  if (autoAwaitingAnswer) {
+   autoRunning = false;
+   setAutoStatus("Answer the question to continue");
+  } else {
+   setAutoStatus("Continuing...");
+   // Yield to browser rendering; subsequent requests are sequential.
+   setTimeout(() => {
+    if (autoRunning && generation === autoGeneration && !autoBusy) sendClassroomMessage("CONTINUE", true);
+   }, 800);
+  }
+ } else if (!autoRunning && generation === autoGeneration && successful) {
+  setAutoStatus(autoAwaitingAnswer ? "Answer the question to continue" : "Ready");
+ }
 }
 
 function clearChat() {
+ pauseAutonomous();
  chatHistory = [];
  localStorage.removeItem("gg_chat_v2");
  renderChat();
