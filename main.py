@@ -6,6 +6,9 @@ from google.genai import types
 from typing import Literal
 import json
 import os
+import logging
+
+logger = logging.getLogger('greatguru.chat')
 
 app = FastAPI(title="GreatGuru GATE ME API")
 origins = [x.strip() for x in os.getenv("ALLOWED_ORIGINS", "https://pradeep7095.github.io").split(",") if x.strip()]
@@ -87,6 +90,14 @@ async def chat(req: ChatRequest):
             "stage": str(result.get("stage", "Lesson"))[:60],
         }
     except (ValueError, json.JSONDecodeError):
+        logger.exception("GreatGuru AI returned invalid JSON or an empty reply")
         raise HTTPException(status_code=502, detail="Invalid AI response")
-    except Exception:
+    except Exception as exc:
+        # Avoid logging secrets or full prompts; exception class and HTTP status
+        # are enough to distinguish authentication, quota, and transport failures.
+        error_type = type(exc).__name__
+        upstream_status = getattr(exc, "code", None)
+        if not isinstance(upstream_status, int):
+            upstream_status = getattr(exc, "status_code", None)
+        logger.error("GreatGuru Gemini request failed: type=%s upstream_status=%s", error_type, upstream_status)
         raise HTTPException(status_code=502, detail="AI service temporarily unavailable")
