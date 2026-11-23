@@ -67,15 +67,32 @@ async def chat(req: ChatRequest):
         f"Latest student instruction: {req.message}"
     )
     try:
-        response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
-            contents=user_content,
-            config=types.GenerateContentConfig(
-                system_instruction=TEACHER_RULES,
-                response_mime_type="application/json",
-                temperature=0.35,
-            ),
-        )
+        # A 404 from Gemini often means the configured model is unavailable
+        # for this API key/version. Retry only for that condition.
+        preferred_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+        candidates = list(dict.fromkeys([preferred_model, "gemini-2.5-flash-lite"]))
+        response = None
+        for model_name in candidates:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=user_content,
+                    config=types.GenerateContentConfig(
+                        system_instruction=TEACHER_RULES,
+                        response_mime_type="application/json",
+                        temperature=0.35,
+                    ),
+                )
+                logger.info("GreatGuru Gemini request succeeded: model=%s", model_name)
+                break
+            except Exception as model_exc:
+                status = getattr(model_exc, "code", None)
+                if not isinstance(status, int):
+                    status = getattr(model_exc, "status_code", None)
+                logger.warning("GreatGuru Gemini model attempt failed: model=%s type=%s status=%s",
+                               model_name, type(model_exc).__name__, status)
+                if status != 404 or model_name == candidates[-1]:
+                    raise
         result = json.loads(response.text or "{}")
         reply = result.get("reply")
         if not isinstance(reply, str) or not reply.strip():
