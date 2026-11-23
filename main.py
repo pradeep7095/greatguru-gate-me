@@ -53,6 +53,33 @@ class ChatRequest(BaseModel):
 async def health_check():
     return {"status": "online", "service": "GreatGuru GATE Mechanical API"}
 
+@app.get("/diagnostics/models")
+async def available_models():
+    """Return only model identifiers supporting text generation, never credentials."""
+    if not client:
+        raise HTTPException(status_code=503, detail="AI service not configured")
+    try:
+        names = []
+        for model in client.models.list():
+            methods = getattr(model, "supported_actions", None)
+            if methods is None:
+                methods = getattr(model, "supported_generation_methods", None)
+            if methods is not None and "generateContent" not in methods:
+                continue
+            name = getattr(model, "name", None)
+            if name:
+                names.append(name)
+            if len(names) >= 100:
+                break
+        return {"models": names, "configured_model": os.getenv("GEMINI_MODEL", "gemini-2.5-flash")}
+    except Exception as exc:
+        status = getattr(exc, "code", None)
+        if not isinstance(status, int):
+            status = getattr(exc, "status_code", None)
+        logger.error("GreatGuru model discovery failed: type=%s status=%s", type(exc).__name__, status)
+        raise HTTPException(status_code=502, detail="Model discovery unavailable")
+
+
 @app.post("/chat")
 async def chat(req: ChatRequest):
     if not client:
