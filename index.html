@@ -464,6 +464,7 @@ let autoRunning = false;
 let autoBusy = false;
 let autoAwaitingAnswer = false;
 let autoGeneration = 0;
+let autoSteps = 0;
 let lastLessonText = "";
 let activeController = null;
 const waitForSpeech = () => new Promise(resolve => {
@@ -492,6 +493,7 @@ function toggleAutonomous() {
  if (autoBusy) return;
  autoRunning = true;
  autoAwaitingAnswer = false;
+ autoSteps = 0;
  setAutoStatus("Teaching...");
  sendClassroomMessage("START CLASS", true);
 }
@@ -528,6 +530,12 @@ async function sendClassroomMessage(text, fromAuto = false) {
   autoGeneration++;
   if ("speechSynthesis" in window) speechSynthesis.cancel();
  }
+ const answeringCheck = !fromAuto && autoAwaitingAnswer;
+ if (answeringCheck) {
+  autoAwaitingAnswer = false;
+  autoRunning = true;
+  autoSteps = 0;
+ }
  const generation = autoGeneration;
  const history = chatHistory.slice(-10).filter(m => m.role === "user" || m.role === "ai");
  chatHistory.push({role:"user", text});
@@ -557,6 +565,13 @@ async function sendClassroomMessage(text, fromAuto = false) {
   autoAwaitingAnswer = data.await_answer === true;
   document.getElementById("aiConnectionStatus").textContent = "Connected: GreatGuru AI Backend";
   successful = true;
+  if (autoRunning) {
+   autoSteps++;
+   if (autoSteps >= 8 && !autoAwaitingAnswer) {
+    autoRunning = false;
+    setAutoStatus("Lesson checkpoint reached — press Start Auto Class to continue");
+   }
+  }
   if (autoRunning) {
    setAutoStatus(autoAwaitingAnswer ? "Waiting for your answer" : "Speaking...");
    await waitForSpeech();
